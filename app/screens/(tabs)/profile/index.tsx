@@ -1,9 +1,16 @@
-import ProfileScreen from '../../profile-screens';
+import HeaderBanner from '@/components/HeaderBanner';
+import { View, Text, Image } from 'react-native';
 
-function ProfileWrapper() {
+function ProfileScreen() {
   return (
-    <ProfileScreen />
+    <View>
+      {/* Header Part */}
+      <HeaderBanner />
+
+      {/* Body Part */}
+      
+    </View>
   );
 }
 
-export default ProfileWrapper;
+export default ProfileScreen;

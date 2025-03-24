@@ -1,9 +1,13 @@
-import MoreScreen from '../../more-screens';
+import HeaderBanner from '@/components/HeaderBanner';
+import { View, Text } from 'react-native';
 
-function MoreWrapper() {
+function StatsScreen() {
   return (
-    <MoreScreen />
+    <View>
+      {/* Body Part */}
+      <Text>Stats Screen</Text>
+    </View>
   );
 }
 
-export default MoreWrapper;
+export default StatsScreen;

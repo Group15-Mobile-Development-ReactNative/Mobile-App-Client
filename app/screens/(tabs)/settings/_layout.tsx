@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 function SettingsStackLayOut() {
   return (
     <Stack>
-        <Stack.Screen name="index" options={{title:'Settings'}} />
+        <Stack.Screen name="index" options={{title:'Settings', headerShown:false}} />
         <Stack.Screen name="language" options={{title:'Language Change'}} />
     </Stack>
   );
