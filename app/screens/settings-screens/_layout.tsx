@@ -1,11 +1,12 @@
 // Stack layout for Settings tab
-import { View, Text } from 'react-native';
+import { Stack } from "expo-router";
 
 function SettingsStackLayOut() {
   return (
-    <View>
-      <Text>Settings Screen</Text>
-    </View>
+    <Stack>
+        <Stack.Screen name="index" options={{title:'Settings'}} />
+        <Stack.Screen name="language" options={{title:'Language Change'}} />
+    </Stack>
   );
 }
 

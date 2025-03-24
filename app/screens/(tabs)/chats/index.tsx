@@ -1,4 +1,6 @@
-import ChatsScreen from '../../chats-screen';
+import ChatsScreen from "../../chats-screen";
+
+
 
 function ChatsWrapper() {
   return (

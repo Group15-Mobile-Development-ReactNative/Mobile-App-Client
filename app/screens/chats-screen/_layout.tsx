@@ -1,11 +1,13 @@
-//  Stack layout for Chats tab
-import { View, Text } from 'react-native';
+import {Stack} from "expo-router";
 
-function ChatsStackLayOut() {
+
+function ChatsStackLayOut() { 
+
   return (
-    <View>
-      <Text>Chats Screen</Text>
-    </View>
+    <Stack>
+      <Stack.Screen name="index" options={{title:'Chats'}} />
+      <Stack.Screen name="[id]" options={{title:'Messages'}} />
+    </Stack>
   );
 }
 
