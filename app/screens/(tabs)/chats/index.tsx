@@ -1,6 +1,7 @@
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import HeaderBanner from '@/components/HeaderBanner';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 function ChatsScreen() {
     
@@ -100,6 +101,13 @@ function ChatsScreen() {
 
           {/* Header Part */}
           <HeaderBanner />
+
+          <TouchableOpacity 
+            style={{position:'absolute', right:20, top:25}}
+            onPress={()=>router.push('/screens/search-screen')}
+            >
+            <AntDesign name="search1" size={24} color="white" />
+          </TouchableOpacity>
           
           {/* Body Part */}
           <FlatList
