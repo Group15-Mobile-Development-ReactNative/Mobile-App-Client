@@ -4,8 +4,11 @@ import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useRouter } from 'expo-router';
 
 function ProfileScreen() {
+
+  const router = useRouter();
 
   const currentUserData = 
   {
@@ -76,7 +79,10 @@ function ProfileScreen() {
           <View style={{flex:2.5, backgroundColor:'yellow', justifyContent:'center', alignItems:'center'}}>
 
             {/* Edit Profile Button */}
-            <TouchableOpacity style={{backgroundColor:'rgb(43, 148, 43)', paddingVertical:12, paddingHorizontal:90, borderRadius:10, marginBottom:15}}>
+            <TouchableOpacity 
+              style={{backgroundColor:'rgb(43, 148, 43)', paddingVertical:12, paddingHorizontal:90, borderRadius:10, marginBottom:15}}
+              onPress={()=>router.navigate('/profile-modal')}
+              >
               <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
                 <SimpleLineIcons name="pencil" size={20} color="white" />
                 <Text style={{fontSize:18, color:'white'}}>Edit Profile</Text>

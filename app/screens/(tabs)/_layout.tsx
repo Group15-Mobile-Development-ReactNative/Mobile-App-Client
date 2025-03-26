@@ -32,7 +32,7 @@ function TabsLayOut() {
             headerShown:false
         }} />
 
-        <Tabs.Screen name="profile/index" options={{
+        <Tabs.Screen name="profile" options={{
             title:'Profile',
             tabBarIcon: ({size, color})=>(<FontAwesome name="user" size={size} color={color} />),
             headerShown:false
