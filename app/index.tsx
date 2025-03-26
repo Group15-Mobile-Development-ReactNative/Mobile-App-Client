@@ -2,7 +2,7 @@ import { Redirect } from "expo-router"
 
 function App(){
     return(
-        <Redirect href='/screens/(tabs)/chats' />
+        <Redirect href='/screens/auth-screens/login' />
     )
 }
 
