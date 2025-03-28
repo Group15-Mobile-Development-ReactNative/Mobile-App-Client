@@ -5,6 +5,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/firebase/firebaseConfig';
 
 function ProfileScreen() {
 
@@ -16,6 +18,17 @@ function ProfileScreen() {
     profilePic:'https://ntrepidcorp.com/wp-content/uploads/2016/06/team-1.jpg',
     email:'t3wiry00@students.oamk.fi',
     status:"Hey, I'm using smart Chat"
+  }
+
+  const handleLogout = async ()=>{
+    try{
+      await signOut(auth)
+      router.navigate('/screens/auth-screens/login')
+    }
+    catch(error){
+      console.log(error)
+    }
+    
   }
 
 
@@ -90,10 +103,14 @@ function ProfileScreen() {
             </TouchableOpacity>
 
             {/* Logout Button */}
-            <TouchableOpacity style={{backgroundColor:'rgb(255, 210, 210)', paddingVertical:12, paddingHorizontal:90, borderRadius:10}}>
-              <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
+            <TouchableOpacity 
+              style={{backgroundColor:'rgb(255, 210, 210)', paddingVertical:12, paddingHorizontal:90, borderRadius:10}}
+              onPress={handleLogout}
+            >
+              <View 
+                style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
                 <AntDesign name="logout" size={20} color="red" />
-                <Text style={{fontSize:18, color:'red'}}>Edit Profile</Text>
+                <Text style={{fontSize:18, color:'red'}}>Logout</Text>
               </View>
             </TouchableOpacity>
           </View>
