@@ -1,10 +1,12 @@
 import { View, Text, TouchableOpacity, TextInput, ImageBackground } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LinearGradient } from 'expo-linear-gradient';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/firebaseConfig";
 
 
 function LoginScreen() {
@@ -12,6 +14,27 @@ function LoginScreen() {
     const router = useRouter();
 
     const [rememberMe, setRememberMe] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorResult, setErrorResult] = useState('')
+
+    useEffect(()=>{
+        setErrorResult('')
+    }, [email, password])
+
+    const handleLogin = async ()=>{
+        console.log('buton clicked')
+        try{
+            await signInWithEmailAndPassword(auth,email,password)
+            router.navigate('/screens/(tabs)/chats')
+
+        }
+        catch(error:any){
+            setErrorResult(error.toString())
+        }
+        
+    }
+
     
     return (
         <ImageBackground 
@@ -37,17 +60,30 @@ function LoginScreen() {
 
                 <View style={{ flex: 0.6, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                     <View style={{ marginTop: 50, marginLeft: 40 }}>
+
+                        {/* Emial Input */}
                         <Text style={{ fontSize: 20 }}>Email Address</Text>
                         <View style={{ flexDirection: 'row', marginTop: 10 }}>
                             <MaterialIcons name="email" size={30} color="lightblue" />
-                            <TextInput style={{ borderWidth: 2, height: 40, width: 250, marginLeft: 18, borderRadius: 20, backgroundColor: 'white' }} />
+                            <TextInput 
+                                style={{ borderWidth: 2, height: 40, width: 250, marginLeft: 18, borderRadius: 20, backgroundColor: 'white' }} 
+                                value={email}
+                                onChangeText={setEmail} 
+                                />
                         </View>
 
+                        {/* Password Input */}
                         <Text style={{ fontSize: 20, marginTop: 10 }}>Password</Text>
                         <View style={{ flexDirection: 'row', marginTop: 10 }}>
                             <FontAwesome6 name="lock" size={30} color="lightblue" />
-                            <TextInput style={{ borderWidth: 2, height: 40, width: 250, marginLeft: 20, borderRadius: 20, backgroundColor: 'white' }} secureTextEntry />
+                            <TextInput 
+                                style={{ borderWidth: 2, height: 40, width: 250, marginLeft: 20, borderRadius: 20, backgroundColor: 'white' }} secureTextEntry
+                                value={password}
+                                onChangeText={setPassword} 
+                                />
                         </View>
+
+                        <Text style={{color:'red'}}>{errorResult}</Text>
 
                         <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 50, marginLeft: 0 }}>
                     <TouchableOpacity
@@ -59,7 +95,7 @@ function LoginScreen() {
                     
                     <TouchableOpacity 
                     style= {{marginLeft: 100, marginTop: -15}}
-                    onPress={()=> router.push("/screens/(tabs)/chats")}>
+                    onPress={handleLogin}>
                       <LinearGradient colors={['#4EF0A1', '#42A1EC']}
                         style={{ width: 60, height: 60, borderRadius: 35, justifyContent: 'center', alignItems: 'center', elevation: 4}}>
                         <Feather name="arrow-right" size={40} color="white" />

@@ -4,6 +4,7 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name="screens/(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="screens/auth-screens" options={{ headerShown: false }} />
       <Stack.Screen
         name="profile-modal"
         options={{

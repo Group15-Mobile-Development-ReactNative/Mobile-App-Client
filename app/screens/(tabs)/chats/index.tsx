@@ -2,9 +2,13 @@ import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import HeaderBanner from '@/components/HeaderBanner';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { auth } from '@/firebase/firebaseConfig';
 
 function ChatsScreen() {
     
+    const router = useRouter();
+
+
     //sample chatList data
     const chatList = [ 
         {
@@ -91,9 +95,9 @@ function ChatsScreen() {
     ]
 
 
-    const router = useRouter();
 
-
+    const userDetails = auth.currentUser?.uid;
+    console.log("Logged user ID: ", userDetails)
 
 
     return (
