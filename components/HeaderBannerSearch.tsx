@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Image, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
 
-export default function HeaderBannerSearch() {
+interface HeaderBannerSearchProps {
+  searchValue: string;
+  setSearchValue: (value: string) => void;
+}
+
+export default function HeaderBannerSearch({ searchValue, setSearchValue }: HeaderBannerSearchProps) { 
 
   const router = useRouter();
   return (
@@ -23,6 +28,8 @@ export default function HeaderBannerSearch() {
       <TextInput
         placeholder='Search'
         style={{position:'absolute', width:'75%', height:40, borderWidth:1, borderColor:'white', top:25, left:80, backgroundColor:'white', borderRadius:20}}
+        value={searchValue}
+        onChangeText={setSearchValue}
       />
     </View>
   );
