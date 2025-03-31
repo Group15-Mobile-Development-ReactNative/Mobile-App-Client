@@ -7,6 +7,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 function IndividualChatScreen() {
   const {id} = useLocalSearchParams();
+  console.log("Clicked User is", id)
 
   const userBinfo = {
       userB:'Shane Dinod',
