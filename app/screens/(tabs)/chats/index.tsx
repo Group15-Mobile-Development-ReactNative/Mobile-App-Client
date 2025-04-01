@@ -2,12 +2,112 @@ import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import HeaderBanner from '@/components/HeaderBanner';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { auth } from '@/firebase/firebaseConfig';
+import { auth, db } from '@/firebase/firebaseConfig';
+import { useCallback, useEffect, useState } from 'react';
+import { collection, getDoc, getDocs, query, where, doc } from 'firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
 
-function ChatsScreen() {
+function ChatsScreen() {    
     
     const router = useRouter();
 
+    //Current User
+    const currentUserId = auth.currentUser?.uid
+    console.log("Current User is: ", currentUserId);
+
+    //State Variables
+    const [chatsList, setChatList] = useState<{ 
+        userB: string; 
+        userBprofileImageUrl: string; 
+        lastMessage: string; 
+        lastMessageTime: Date; 
+        unreadB: number; 
+        userBid: string; 
+    }[]>([])
+
+    // To get current user data
+    const [currentUserInfo, setCurrentUserInfo]= useState<any>(null)
+    useEffect(()=>{
+    
+    const fetchCurrentUser = async()=>{
+        try{
+        if (currentUserId) {
+            const querySnapshot = await getDoc(doc(db, "users", currentUserId));
+            const data = querySnapshot.data();
+            console.log("Current user details: ", data)
+            setCurrentUserInfo(data)
+        } else {
+            console.log("Current user ID is undefined");
+        }
+        }
+
+        catch(error){
+        console.log(error)
+        }
+    }
+
+    fetchCurrentUser();
+    },[])
+
+
+
+    // Load Chats
+    useFocusEffect(  //This hook runs every time the screen is focused (even when navigating back)
+    
+        useCallback(()=>{
+            
+            const fetchChats = async()=>{
+                try{
+                    // Get chats where current user is userA
+                    const q1 = query(collection(db,"chats"), where("userA", "==", currentUserId))
+                    const snap1 = await getDocs(q1);
+
+                    // Get chats where current user is userB
+                    const q2 = query(collection(db,"chats"), where("userB", "==", currentUserId))
+                    const snap2 = await getDocs(q2);
+
+                    // snap1 : Map chatList 1 Data -> where user is userA
+                    const chatList1 = snap1.docs.map((element)=>{
+                        return{
+                            userB: element.data().userBdisplayName, 
+                            userBprofileImageUrl:element.data().userBprofilePic,
+                            lastMessage: element.data().lastMessage,
+                            lastMessageTime: element.data().lastMessageTime?.toDate() || new Date(),
+                            unreadB: element.data().unreadA || 0,
+                            userBid:element.data().userB
+                        }
+                    });
+
+                    // snap2 : Map chatList 2 Data -> where user is userB
+                    const chatList2 = snap2.docs.map((element)=>{
+                        return{
+                            userB: element.data().userAdisplayName, 
+                            userBprofileImageUrl:element.data().userAprofilePic,
+                            lastMessage: element.data().lastMessage,
+                            lastMessageTime: element.data().lastMessageTime?.toDate() || new Date(),
+                            unreadB: element.data().unreadB || 0,
+                            userBid:element.data().userA
+                        }
+                    });
+
+                    // Combine both chat lists
+                    const allChats = [...chatList1, ...chatList2];
+                    setChatList(allChats);
+                    console.log("Chats List: ", allChats);                
+                }
+
+                catch(error){
+                    console.log(error)
+                }
+            }
+
+            fetchChats();
+
+
+        },[])
+    )
+
+    /* NEED TO DELETE
 
     //sample chatList data
     const chatList = [ 
@@ -93,11 +193,9 @@ function ChatsScreen() {
             userBid:'user010'
         }
     ]
+        */
 
 
-
-    const userDetails = auth.currentUser?.uid;
-    console.log("Logged user ID: ", userDetails)
 
 
     return (
@@ -115,7 +213,7 @@ function ChatsScreen() {
           
           {/* Body Part */}
           <FlatList
-              data={chatList}
+              data={chatsList}
               renderItem ={ ({item})=>(
                   <View style={{flex:1,flexDirection:'column' ,backgroundColor:'white'}}>
                       <TouchableOpacity
@@ -139,7 +237,7 @@ function ChatsScreen() {
                                       <Text style={{fontSize:10}}>{item.lastMessageTime.toString().slice(16,21)}</Text>
                                   </View>
                                   
-                                  <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', backgroundColor:'green', width:15, height:15, borderRadius:5, marginTop:15}}>
+                                  <View style={item.unreadB!=0?{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', backgroundColor:'green', width:15, height:15, borderRadius:5, marginTop:15}: undefined}>
                                       <Text style={{fontSize:10, color:'white'}}>{item.unreadB}</Text>
                                   </View>                                    
                               </View>                                     

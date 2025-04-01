@@ -5,18 +5,18 @@ import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
 
+interface User {
+  userid: string;
+  email: string;
+  displayName: string;
+  createdAt: string | undefined;
+  profilePic: string | undefined;
+}
+
 function SearchScreen() {
 
   const currentUser = auth.currentUser?.email;
   console.log('Logged user is:',currentUser)
-
-  interface User {
-    userid: string;
-    email: string;
-    displayName: string;
-    createdAt: string | undefined;
-    profilePic: string | undefined;
-  }
 
   const router = useRouter();
   const [usersList, setUsersList] = useState<User[]>([])
