@@ -2,7 +2,13 @@ import { Link } from 'expo-router';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
 
+
+
+
+
 export default function Modal() {
+
+
   return (
     <Animated.View
       entering={FadeIn}

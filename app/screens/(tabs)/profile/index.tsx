@@ -6,11 +6,73 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import { signOut } from 'firebase/auth';
-import { auth } from '@/firebase/firebaseConfig';
+import { auth, db } from '@/firebase/firebaseConfig';
+import { useEffect, useState, useCallback } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { useFocusEffect } from '@react-navigation/native';
+
+interface User{
+  lastSeen: string,
+  createdAt:string,
+  id: string,
+  profilePic: string,
+  displayName:string,
+  email:string,
+  status: string
+}
 
 function ProfileScreen() {
 
   const router = useRouter();
+
+  //Curret User Data
+  const currentUser = auth.currentUser?.uid
+  console.log("Current User is: ",currentUser);
+
+  //State Variables
+  const [profileData, setProfileData] = useState< User| null>(null)
+
+  useFocusEffect(
+
+    useCallback(()=>{
+      const fetchCurrentUser = async ()=>{
+
+        try{
+          if (currentUser) {
+            const queryUserSnap = await getDoc(doc(db, "users", currentUser.toString()));
+            const userData = queryUserSnap.data()
+            console.log("user Data is: ", userData);
+            if (userData) {
+              setProfileData({
+                lastSeen: userData.lastSeen,
+                createdAt: userData.createdAt,
+                id: userData.id,
+                profilePic: userData.profilePic,
+                displayName: userData.displayName,
+                email: userData.email,
+                status: userData.status,
+              } );
+            } else {
+              console.error("User data is undefined");
+            }
+          } 
+          
+          else {
+            console.error("Current user is undefined");
+          }
+        }
+
+        catch(error){
+          console.log(error);
+        }
+      }
+
+      fetchCurrentUser();
+
+    },[])
+  )
+
+  /*NEED TO DELETE
 
   const currentUserData = 
   {
@@ -19,6 +81,7 @@ function ProfileScreen() {
     email:'t3wiry00@students.oamk.fi',
     status:"Hey, I'm using smart Chat"
   }
+  */
 
   const handleLogout = async ()=>{
     try{
@@ -46,7 +109,7 @@ function ProfileScreen() {
             <View style={{position:'relative', backgroundColor:'white'}}>
               <View style={{alignItems:'flex-end'}}>
                 <Image
-                  source={{ uri: currentUserData.profilePic }}
+                  source={{ uri: profileData?.profilePic }}
                   style={{width:150, height:150, borderRadius:100}}
                 
                 />
@@ -55,7 +118,7 @@ function ProfileScreen() {
                 </TouchableOpacity>
               </View> 
             </View>
-            <Text style={{fontWeight:'bold', fontSize:20}}>{currentUserData.displayName}</Text>
+            <Text style={{fontWeight:'bold', fontSize:20}}>{profileData?.displayName}</Text>
           </View>
 
           {/* Text Inputs Part */}
@@ -66,7 +129,7 @@ function ProfileScreen() {
                 <Text style={{marginTop:10, color:'rgb(95, 94, 94)'}}>Display Name</Text>
                 <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                   <FontAwesome5 name="user-circle" size={24} color="gray" />
-                  <Text>{currentUserData.displayName}</Text>
+                  <Text>{profileData?.displayName}</Text>
                 </View>
               </View>
 
@@ -74,14 +137,14 @@ function ProfileScreen() {
                 <Text style={{marginTop:10, color:'rgb(95, 94, 94)'}}>Email</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                     <FontAwesome5 name="user-circle" size={24} color="gray" />
-                    <Text>{currentUserData.email}</Text>
+                    <Text>{profileData?.email}</Text>
                   </View>
                 </View>
               <View style={{flex:1, borderBottomColor:'gray', borderBottomWidth:2}}>
                 <Text style={{marginTop:10, color:'rgb(95, 94, 94)'}}>Status</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                     <FontAwesome5 name="user-circle" size={24} color="gray" />
-                    <Text>{currentUserData.status}</Text>
+                    <Text>{profileData?.status}</Text>
                   </View>
                 </View>
             </View>
