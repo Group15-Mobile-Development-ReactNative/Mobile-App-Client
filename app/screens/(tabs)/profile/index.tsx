@@ -1,5 +1,5 @@
 import HeaderBanner from '@/components/HeaderBanner';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
@@ -12,6 +12,7 @@ import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } fro
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import Toast from 'react-native-toast-message';
 
 
 interface User{
@@ -34,9 +35,13 @@ function ProfileScreen() {
 
   //State Variables
   const [profileData, setProfileData] = useState< User| null>(null)
+  console.log("profile Dat is: ", profileData)
+  const [newProfilePic, setNewProfilePic] = useState('')
+  const [triggeredWhenSave, setTriggeredWhenSave] = useState(false)
 
+
+  /* UPON FOCUS ON THE PAGE GET CURRENT USERS'S DATA INTO STATE VARIABLE */
   useFocusEffect(
-
     useCallback(()=>{
       const fetchCurrentUser = async ()=>{
 
@@ -55,6 +60,7 @@ function ProfileScreen() {
                 email: userData.email,
                 status: userData.status,
               } );
+
             } else {
               console.error("User data is undefined");
             }
@@ -75,17 +81,8 @@ function ProfileScreen() {
     },[])
   )
 
-  /*NEED TO DELETE
 
-  const currentUserData = 
-  {
-    displayName:'Shane Dinod',
-    profilePic:'https://ntrepidcorp.com/wp-content/uploads/2016/06/team-1.jpg',
-    email:'t3wiry00@students.oamk.fi',
-    status:"Hey, I'm using smart Chat"
-  }
-  */
-
+  /* UPON CLICK LOGOUT BUTTON THE USER IS SIGNNED OUT FROM THE SESSION */
   const handleLogout = async ()=>{
     try{
       await signOut(auth)
@@ -97,7 +94,7 @@ function ProfileScreen() {
     
   }
 
-
+  /* UPON UPDATE PROFILE PIC THIS FUNCTIONN TRIGGERS */
   const handleUpdateProfilePic = async()=>{
 
     try{
@@ -122,15 +119,23 @@ function ProfileScreen() {
   
         const downloadURL = await getDownloadURL(storageRef);
         console.log("Download URL: ", downloadURL)
-  
+        setNewProfilePic(downloadURL);
+
+        updateChatsWithNewProfilePic(downloadURL);
+
+
         // Update Firestore
         await setDoc(doc(db, 'users', currentUser), { profilePic: downloadURL }, { merge: true });
 
-        // Update all chats where user is involved
-        await updateChatsWithNewProfile(currentUser, profileData?.displayName || "", downloadURL);
+        Toast.show({
+          type: 'success',
+          text1: 'Profile picture updated!',
+          position: 'top',
+        });
   
         // Update UI
-        setProfileData((prev) => prev ? { ...prev, profilePic: downloadURL } : null);
+        setProfileData((prev) => prev ? { ...prev, profilePic: downloadURL } : null);      
+        
       }
 
     }
@@ -140,35 +145,53 @@ function ProfileScreen() {
 
   }
 
-  const updateChatsWithNewProfile = async (userId: string, newName: string, newPic: string) => {
-    const chatRef = collection(db, "chats");
-  
-    // Update userA fields
-    const q1 = query(chatRef, where("userA", "==", userId));
-    const q1Snap = await getDocs(q1);
-    q1Snap.forEach(docSnap => {
-      updateDoc(docSnap.ref, {
-        userAdisplayName: newName,
-        userAprofilePic: newPic
-      });
-    });
-  
-    // Update userB fields
-    const q2 = query(chatRef, where("userB", "==", userId));
-    const q2Snap = await getDocs(q2);
-    q2Snap.forEach(docSnap => {
-      updateDoc(docSnap.ref, {
-        userBdisplayName: newName,
-        userBprofilePic: newPic
-      });
-    });
-  };
   
 
+  /* ****** Upon change profilePic, update it in "chats" collection" ****** */
+  // Above function is to update profile pic. Upon change below function is triggered
 
+  // When user chages his profilePic, the profilePic in "chats" collection also need to be change.
+  /* 
+    1. Get docuements which has the current user
+    2. Then for each document update the new name
+  */
+ 
+  const updateChatsWithNewProfilePic  = async(downloadURL:string)=>{
+    try{
+      console.log('Triggered')
 
+      // Update userA fields (round 1)
+      const q1 = query(collection(db, "chats"), where("userA", "==", currentUser));
+      const snap1 = await getDocs(q1);
+      console.log(`Found ${snap1.size} chats as userA`);
 
+      snap1.docs.forEach((element) =>{
+        console.log("element A is: ",element.data())
 
+        updateDoc(doc(db,"chats", element.id),{
+          userAprofilePic: downloadURL
+        })
+      })
+
+      // Update userB fields  (round 2)
+      const q2 = query(collection(db, "chats"), where("userB", "==", currentUser));
+      const snap2 = await getDocs(q2);
+      console.log(`Found ${snap2.size} chats as userA`);
+
+      snap2.docs.forEach((element) =>{
+        console.log("element B is: ",element.data())
+
+        updateDoc(doc(db,"chats", element.id),{
+          userBprofilePic: downloadURL
+        })
+      })
+
+    }
+    catch(error){
+      console.log(error)
+    }
+
+  }
 
 
   return (
@@ -176,28 +199,30 @@ function ProfileScreen() {
       {/* Header Part */}
       <HeaderBanner />
 
-      <View style={{flex:2}}>    
+      <View style={{flex:2, backgroundColor:'white'}}>    
 
           {/* Profile Pic Part */}
-          <View style={{flex:3, backgroundColor:'white', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
-            
-            <View style={{position:'relative', backgroundColor:'white'}}>
-              <View style={{alignItems:'flex-end'}}>
-                <Image
-                  source={{ uri: profileData?.profilePic }}
-                  style={{width:150, height:150, borderRadius:100}}
-                
-                />
-                <TouchableOpacity 
-                  style={{position:'absolute', backgroundColor:'rgb(16, 197, 16)', borderRadius:100, padding:5}}
-                  onPress={handleUpdateProfilePic}
-                  >
-                  <Entypo name="pencil" size={24} color="black" />
-                </TouchableOpacity>
-              </View> 
+          <ScrollView contentContainerStyle={{ top:20, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{flex:3, backgroundColor:'white', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
+              
+              <View style={{position:'relative', backgroundColor:'white'}}>
+                <View style={{alignItems:'flex-end'}}>
+                  <Image
+                    source={{ uri: profileData?.profilePic }}
+                    style={{width:150, height:150, borderRadius:100}}
+                  
+                  />
+                  <TouchableOpacity 
+                    style={{position:'absolute', backgroundColor:'rgb(16, 197, 16)', borderRadius:100, padding:5}}
+                    onPress={handleUpdateProfilePic}
+                    >
+                    <Entypo name="pencil" size={24} color="black" />
+                  </TouchableOpacity>
+                </View> 
+              </View>
+              <Text style={{fontWeight:'bold', fontSize:20}}>{profileData?.displayName}</Text>
             </View>
-            <Text style={{fontWeight:'bold', fontSize:20}}>{profileData?.displayName}</Text>
-          </View>
+          </ScrollView>
 
           {/* Text Inputs Part */}
           <View style={{flex:4, backgroundColor:'white'}}>
@@ -234,7 +259,7 @@ function ProfileScreen() {
 
             {/* Edit Profile Button */}
             <TouchableOpacity 
-              style={{backgroundColor:'rgb(43, 148, 43)', paddingVertical:12, paddingHorizontal:90, borderRadius:10, marginBottom:15}}
+              style={{backgroundColor:'rgb(43, 148, 43)', paddingVertical:12, width:300, borderRadius:10, marginBottom:15}}
               onPress={()=>router.navigate('/profile-modal')}
               >
               <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
@@ -245,7 +270,7 @@ function ProfileScreen() {
 
             {/* Logout Button */}
             <TouchableOpacity 
-              style={{backgroundColor:'rgb(255, 210, 210)', paddingVertical:12, paddingHorizontal:90, borderRadius:10}}
+              style={{backgroundColor:'rgb(255, 210, 210)', paddingVertical:12, width:300, borderRadius:10}}
               onPress={handleLogout}
             >
               <View 

@@ -98,7 +98,7 @@ function SearchScreen() {
   return (
     <View>
       <HeaderBannerSearch searchValue={searchValue} setSearchValue={setSearchValue} />
-      <Text style={{fontFamily: 'MadimiOne-Regular', color:'gray', marginTop:20, left:15, bottom:5}}>Chat with a friend</Text>
+      <Text style={{fontFamily: 'MadimiOne-Regular', color:'gray', marginTop:20, left:15, bottom:5}}>Find a friend</Text>
 
       <FlatList 
         data={usersList}
@@ -110,13 +110,13 @@ function SearchScreen() {
                 onPress={()=>router.push(`/screens/(tabs)/chats/${item.userid}`)}
               
               >
-                <View style={{flex:2, backgroundColor:'yellow', justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:2, backgroundColor:'white', justifyContent:'center', alignItems:'center'}}>
                 <Image
                   source={{ uri: item.profilePic}}
                   style={{width:50, height:50, borderRadius:20}}
                 />
                 </View>
-                <View style={{flex:8, backgroundColor:'pink', flexDirection:'column'}}>
+                <View style={{flex:8, backgroundColor:'white', flexDirection:'column'}}>
                   <Text style={{fontWeight:'bold', top:2}}>{item.displayName}</Text>
                   <Text style={{color:'gray', fontSize:12, top:8}}>Added on {item.createdAt}</Text>
                 </View>

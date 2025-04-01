@@ -1,10 +1,11 @@
 import { useRouter } from 'expo-router';
-import {Alert, Pressable,StyleSheet,Text,TextInput,TouchableOpacity,View} from 'react-native';
+import {KeyboardAvoidingView, Platform, Pressable,StyleSheet,Text,TextInput,TouchableOpacity,View, ScrollView} from 'react-native';
 import Animated, {FadeIn,SlideInDown,SlideOutDown,} from 'react-native-reanimated';
 import Octicons from '@expo/vector-icons/Octicons';
 import { auth, db } from '@/firebase/firebaseConfig';
 import { useEffect, useState } from 'react';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import Toast from 'react-native-toast-message';
 
 interface User{
   lastSeen: string,
@@ -15,6 +16,8 @@ interface User{
   email:string,
   status: string
 }
+
+
 
 export default function Modal() {
 
@@ -79,6 +82,14 @@ export default function Modal() {
     try{
       if (currentUser) {
         await updateDoc(doc(db, "users", currentUser), { displayName: userName, email: userEmail, status: userStatus });
+        updateChatsWithNewUserName(userName);   //Trigger below function upon saving details
+
+        Toast.show({
+          type: 'success',
+          text1: 'Profile data updated!',
+          position: 'top',
+        });
+
         router.navigate('/screens/(tabs)/profile')
       }       
       else {
@@ -90,20 +101,52 @@ export default function Modal() {
     }
   }
 
-
-
-  /* NEED TO DELETE
-
-  const currentUserData = 
-  {
-    displayName:'Shane Dinod',
-    profilePic:'https://ntrepidcorp.com/wp-content/uploads/2016/06/team-1.jpg',
-    email:'t3wiry00@students.oamk.fi',
-    status:"Hey, I'm using smart Chat"
-  }
+  /* ****** Upon change userName, update it in "chats collection" ****** */
+  // When user chages his name, the name in "chats" collection also need to be change.
+  // So below function triggers when user changes his name
+  // I can move this to handleSave. But I did this way in oder to understand this by ease.
+  /* 
+    1. Get docuements which has the current user
+    2. Then for each document update the new name
   */
+    const updateChatsWithNewUserName  = async(userName:string)=>{
+      try{
+        // Update userA fields (round 1)
+        const q1 = query(collection(db, "chats"), where("userA", "==", currentUser));
+        const snap1 = await getDocs(q1);
+        console.log(`Found ${snap1.size} chats as userA`);
 
-  return (
+        snap1.docs.forEach((element) =>{
+          console.log("element A is: ",element.data())
+
+          updateDoc(doc(db,"chats", element.id),{
+            userAdisplayName: userName
+          })
+        })
+
+        // Update userB fields  (round 2)
+        const q2 = query(collection(db, "chats"), where("userB", "==", currentUser));
+        const snap2 = await getDocs(q2);
+        console.log(`Found ${snap2.size} chats as userA`);
+
+        snap2.docs.forEach((element) =>{
+          console.log("element B is: ",element.data())
+
+          updateDoc(doc(db,"chats", element.id),{
+            userBdisplayName: userName
+          })
+        })
+
+      }
+      catch(error){
+        console.log(error)
+      }
+
+    }
+ 
+
+
+  return (    
     <Animated.View
       entering={FadeIn}
       exiting={FadeIn} 
@@ -112,8 +155,8 @@ export default function Modal() {
         justifyContent: 'flex-end',
         alignItems: 'center',
         backgroundColor: '#00000040',
-      }}
-    >
+      }}>
+
       {/* Dismiss when pressing outside */}
       <Pressable
         style={StyleSheet.absoluteFill}
@@ -125,67 +168,70 @@ export default function Modal() {
         exiting={SlideOutDown} // slide down when dismissed
         style={{
           width: '100%',
-          height: '60%',
-          alignItems: 'center',
+          height: '58%',
           justifyContent: 'flex-start',
           backgroundColor: 'white',
-          borderRadius: 20,
-          padding: 20,
-        }}
-      >
-        <View style={{position:'absolute'}}>
-          <Octicons name="horizontal-rule" size={24} color="gray" />          
-        </View>
-        
-        <Text style={{ fontWeight: 'bold', fontSize:15}}>Edit Profile</Text>
-        
+          borderTopEndRadius: 30,
+          borderTopStartRadius: 30,
+          padding: 0,
+        }}>   
 
-        <View style={{flex:8, backgroundColor:'yellow', justifyContent:'center', alignItems:'flex-start', width:'90%' }}>
+        <ScrollView contentContainerStyle={{ top:20, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+
+          <View style={{justifyContent: 'center', alignItems: 'center',bottom:18}}>
+            <Octicons name="horizontal-rule" size={24} color="gray" />    
+              
+            <Text style={{ fontWeight: 'bold', fontSize:15}}>Edit Profile</Text>
+          </View>
           
-          <Text style={{color:'gray'}}>Display Name</Text>
-          <TextInput 
-            style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:10}}
-            placeholder=''
-            value={userName}
-            onChangeText={setUserName}
-          />
-
-          <Text style={{color:'gray'}}>Email</Text>
-          <TextInput 
-            style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:10}}
-            placeholder=''
-            value={userEmail}
-            onChangeText={setUserEmail}
-          />
-
-          <Text style={{color:'gray'}}>Status</Text>
-          <TextInput 
-            style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:10}}
-            placeholder=''
-            value={userStatus}
-            onChangeText={setUserStatus}
-          />
           
-        </View>
+              
+
+          <View style={{flex:8, backgroundColor:'white', justifyContent:'center', alignItems:'flex-start', width:'90%', marginBottom:50, marginTop: 30 }}>
+            
+            <Text style={{color:'gray'}}>Display Name</Text>
+            <TextInput 
+              style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:15}}
+              placeholder=''
+              value={userName}
+              onChangeText={setUserName}
+            />
+
+            <Text style={{color:'gray'}}>Email</Text>
+            <TextInput 
+              style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:15}}
+              placeholder=''
+              value={userEmail}
+              onChangeText={setUserEmail}
+            />
+
+            <Text style={{color:'gray'}}>Status</Text>
+            <TextInput 
+              style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:0}}
+              placeholder=''
+              value={userStatus}
+              onChangeText={setUserStatus}
+            />
+            
+          </View>
 
 
 
-        <View style={{flex:2, backgroundColor:'pink', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
-          <TouchableOpacity
-            style={{backgroundColor:'#ECF9FF', width:130, height:50, borderRadius:20, justifyContent:'center', alignItems:'center'}}          
-            onPress={() => router.back()}>
-            <Text style={{color:'#3AB2E8', fontWeight:'bold', fontSize:15}}>Cancel</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            style={{backgroundColor:'#46B5BD', width:130, height:50, borderRadius:30, justifyContent:'center', alignItems:'center'}}
-            onPress={handleSave}
-            >
-            <Text style={{color:'white', fontWeight:'bold', fontSize:17}}>Save</Text>
-          </TouchableOpacity>
-        </View>
-
-        
+          <View style={{flex:2, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
+            <TouchableOpacity
+              style={{backgroundColor:'#ECF9FF', width:130, height:50, borderRadius:20, justifyContent:'center', alignItems:'center'}}          
+              onPress={() => router.back()}>
+              <Text style={{color:'#3AB2E8', fontWeight:'bold', fontSize:15}}>Cancel</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={{backgroundColor:'#46B5BD', width:130, height:50, borderRadius:30, justifyContent:'center', alignItems:'center'}}
+              onPress={handleSave}
+              >
+              <Text style={{color:'white', fontWeight:'bold', fontSize:17}}>Save</Text>
+            </TouchableOpacity>
+          </View>    
+        </ScrollView>
       </Animated.View>
     </Animated.View>
   );
