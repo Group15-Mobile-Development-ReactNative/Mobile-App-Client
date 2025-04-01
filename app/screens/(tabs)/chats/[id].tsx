@@ -5,7 +5,7 @@ import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Entypo from '@expo/vector-icons/Entypo';
 import { auth, db } from '@/firebase/firebaseConfig';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 
 interface UserB{
@@ -282,6 +282,15 @@ function IndividualChatScreen() {
       },
     ];*/
 
+    const flatListRef = useRef<FlatList>(null);
+
+    useEffect(() => {
+      if (messagesList.length > 0) {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }
+    }, [messagesList]);
+    
+
 
   return (
     <KeyboardAvoidingView
@@ -289,103 +298,98 @@ function IndividualChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={80}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-        <View style={{flex:1, flexDirection:'column'}}>
+      <View style={{flex:1, flexDirection:'column'}}>
 
-          {/* Chat Banner */}
-          <View style={{backgroundColor:'yellow', flexDirection:'row', height: 70}}>
+        {/* Chat Banner */}
+        <View style={{backgroundColor:'white', flexDirection:'row', height: 70}}>
 
-            {/* Profile Pic Part */}
-            <View style={{flex:2, backgroundColor:'gray'}}>
-              <Image
-                source={{ uri: userBinfo?.profilePic }}
-                style={{width:50, height:50, borderRadius:50, marginLeft:20, marginBottom:5}}
-              />
-            </View>
-
-            {/* UserB Name Part */}
-            <View style={{flex:4.5, backgroundColor:'yellow', flexDirection:'column', justifyContent:'center', marginBottom:10, marginLeft:8}}>
-              <Text style={{fontSize:15, fontWeight:'bold'}}>{userBinfo?.displayName}</Text>
-            </View>
-
-            {/*Call Icons Part */}
-            <View style={{flex:3.5, backgroundColor:'green', flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
-              <TouchableOpacity>
-              <Ionicons name="videocam-outline" size={28} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Ionicons name="call-outline" size={24} color="black" />
-              </TouchableOpacity>
-            </View>   
+          {/* Profile Pic Part */}
+          <View style={{flex:2, backgroundColor:'white'}}>
+            <Image
+              source={{ uri: userBinfo?.profilePic }}
+              style={{width:50, height:50, borderRadius:50, marginLeft:20, marginBottom:5}}
+            />
           </View>
 
-
-          {/* Chat Body */}
-          <View style={{flex:7, backgroundColor:'pink', flexDirection:'column'}}>
-            <View>
-              <FlatList 
-                data={messagesList}
-                renderItem={({item})=> {
-                  return (
-                    item.senderId!=currentUserId?
-                    <View style={{flexDirection:'column', justifyContent:'center', alignItems:'flex-start', padding:15}}>
-                      <Text>{item.text}</Text>
-                      <Text>{item.sentAt}</Text>
-                    </View>
-                    :
-                    <View style={{backgroundColor:'blue', flexDirection:'column', justifyContent:'center', alignItems:'flex-end', padding:15}}>
-                      <Text style={{color:'white'}}>{item.text}</Text>
-                      <Text style={{color:'white', marginTop:5, fontSize:10}}>{item.sentAt}</Text>
-                    </View>
-                )}}
-              />
-            </View>
+          {/* UserB Name Part */}
+          <View style={{flex:4.5, backgroundColor:'white', flexDirection:'column', justifyContent:'center', marginBottom:10, marginLeft:8}}>
+            <Text style={{fontSize:15, fontWeight:'bold'}}>{userBinfo?.displayName}</Text>
           </View>
 
-
-
-
-
-
-          {/* Bottom Text Input */}
-          <View style={{ flexDirection:'row', position:'absolute', bottom:0, backgroundColor:'white', paddingVertical:10, paddingHorizontal: 10 }}>
-
-            {/* Text Input */}
-            <View style={{flex:8, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:15, position:'relative'}}>
-              <TextInput
-                placeholder='Type a message'
-                style={{borderWidth:1, borderColor:'black', width:'100%', borderRadius:10, paddingRight:60}}
-                value={inputMessage}
-                onChangeText={setInputMessage}
-              />
-              {/* Attach Icons */}
-              <View style={{position:'absolute', flexDirection:'row', right:20, gap:10}}>
-                <TouchableOpacity>
-                  <Entypo name="camera" size={20} color="gray" />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Feather name="paperclip" size={20} color="gray" />
-                </TouchableOpacity>        
-              </View>
-                
-            </View>        
-
-            
-
-            {/* Send Button */}
-            <View style={{flex:2, backgroundColor:'yellow', justifyContent:'center', alignItems:'center'}}>
-              <TouchableOpacity 
-                style={{borderWidth:1, borderRadius:50, padding:5, backgroundColor:'rgb(16, 197, 16)'}}
-                onPress={handleMessageSend}            
-                >
-                <FontAwesome name="send" size={24} color="white" />
-              </TouchableOpacity>          
-            </View>
-            
-          </View>
+          {/*Call Icons Part */}
+          <View style={{flex:3.5, backgroundColor:'white', flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
+            <TouchableOpacity>
+            <Ionicons name="videocam-outline" size={28} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Ionicons name="call-outline" size={24} color="black" />
+            </TouchableOpacity>
+          </View>   
         </View>
-      </TouchableWithoutFeedback>
+
+
+        {/* Chat Body */}
+        <View style={{flex:7, backgroundColor:'#98FB98', flexDirection:'column'}}>
+            <FlatList 
+              ref={flatListRef}
+              data={messagesList}
+              renderItem={({item})=> {
+                const isSender = item.senderId === currentUserId;
+
+                return (
+                  <View style={{ flexDirection: 'row', justifyContent: isSender ? 'flex-end' : 'flex-start', paddingHorizontal: 10, marginVertical: 5 }}>
+                    <View style={{ maxWidth: '75%', backgroundColor: isSender ? '#4A90E2' : '#E5E5EA', borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}>
+                      <Text style={{ color: isSender ? 'white' : 'black', fontSize: 16 }}>{item.text}</Text>
+                      <Text style={{ color: isSender ? '#D0E6FF' : '#555', fontSize: 10, marginTop: 5, textAlign: 'right' }}>{item.sentAt}</Text>
+                    </View>
+                  </View>
+              )}}
+            />
+        </View>
+
+
+
+
+
+
+        {/* Bottom Text Input */}
+        <View style={{ flexDirection:'row', bottom:0, backgroundColor:'white', paddingVertical:10, paddingHorizontal: 10 }}>
+
+          {/* Text Input */}
+          <View style={{flex:8, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:15, position:'relative'}}>
+            <TextInput
+              placeholder='Type a message'
+              style={{borderWidth:1, borderColor:'black', width:'100%', borderRadius:10, paddingRight:60}}
+              value={inputMessage}
+              onChangeText={setInputMessage}
+            />
+            {/* Attach Icons */}
+            <View style={{position:'absolute', flexDirection:'row', right:20, gap:10}}>
+              <TouchableOpacity>
+                <Entypo name="camera" size={20} color="gray" />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Feather name="paperclip" size={20} color="gray" />
+              </TouchableOpacity>        
+            </View>
+              
+          </View>        
+
+          
+
+          {/* Send Button */}
+          <View style={{flex:2, backgroundColor:'white', justifyContent:'center', alignItems:'center'}}>
+            <TouchableOpacity 
+              style={{borderWidth:1, borderRadius:50, padding:5, backgroundColor:'rgb(16, 197, 16)'}}
+              onPress={handleMessageSend}            
+              >
+              <FontAwesome name="send" size={24} color="white" />
+            </TouchableOpacity>          
+          </View>
+          
+        </View>
+      </View>
     </KeyboardAvoidingView>
   );
 }

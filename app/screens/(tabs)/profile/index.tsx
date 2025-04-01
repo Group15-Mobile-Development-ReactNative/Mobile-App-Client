@@ -6,10 +6,13 @@ import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import { signOut } from 'firebase/auth';
-import { auth, db } from '@/firebase/firebaseConfig';
+import { auth, db, storage } from '@/firebase/firebaseConfig';
 import { useEffect, useState, useCallback } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+
 
 interface User{
   lastSeen: string,
@@ -95,6 +98,78 @@ function ProfileScreen() {
   }
 
 
+  const handleUpdateProfilePic = async()=>{
+
+    try{
+      // Expo Go Part: https://docs.expo.dev/versions/latest/sdk/imagepicker/
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images, // 
+        allowsEditing: true,
+        aspect: [4, 4],
+        quality: 0.4,
+      });
+
+      console.log("image result is ", result);
+
+      // FireBase Part: https://firebase.google.com/docs/storage/web/upload-files
+      if (!result.canceled && currentUser) {
+        const imageUri = result.assets[0].uri;
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+  
+        const storageRef = ref(storage, `profilePics/${currentUser}.jpg`);
+        await uploadBytes(storageRef, blob);
+  
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("Download URL: ", downloadURL)
+  
+        // Update Firestore
+        await setDoc(doc(db, 'users', currentUser), { profilePic: downloadURL }, { merge: true });
+
+        // Update all chats where user is involved
+        await updateChatsWithNewProfile(currentUser, profileData?.displayName || "", downloadURL);
+  
+        // Update UI
+        setProfileData((prev) => prev ? { ...prev, profilePic: downloadURL } : null);
+      }
+
+    }
+    catch(error:any){
+      console.error("Error uploading image:", error.message);
+    }
+
+  }
+
+  const updateChatsWithNewProfile = async (userId: string, newName: string, newPic: string) => {
+    const chatRef = collection(db, "chats");
+  
+    // Update userA fields
+    const q1 = query(chatRef, where("userA", "==", userId));
+    const q1Snap = await getDocs(q1);
+    q1Snap.forEach(docSnap => {
+      updateDoc(docSnap.ref, {
+        userAdisplayName: newName,
+        userAprofilePic: newPic
+      });
+    });
+  
+    // Update userB fields
+    const q2 = query(chatRef, where("userB", "==", userId));
+    const q2Snap = await getDocs(q2);
+    q2Snap.forEach(docSnap => {
+      updateDoc(docSnap.ref, {
+        userBdisplayName: newName,
+        userBprofilePic: newPic
+      });
+    });
+  };
+  
+
+
+
+
+
+
 
   return (
     <View style={{flex:1}}>
@@ -104,7 +179,7 @@ function ProfileScreen() {
       <View style={{flex:2}}>    
 
           {/* Profile Pic Part */}
-          <View style={{flex:3, backgroundColor:'yellow', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
+          <View style={{flex:3, backgroundColor:'white', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
             
             <View style={{position:'relative', backgroundColor:'white'}}>
               <View style={{alignItems:'flex-end'}}>
@@ -113,7 +188,10 @@ function ProfileScreen() {
                   style={{width:150, height:150, borderRadius:100}}
                 
                 />
-                <TouchableOpacity style={{position:'absolute', backgroundColor:'rgb(16, 197, 16)', borderRadius:100, padding:5}}>
+                <TouchableOpacity 
+                  style={{position:'absolute', backgroundColor:'rgb(16, 197, 16)', borderRadius:100, padding:5}}
+                  onPress={handleUpdateProfilePic}
+                  >
                   <Entypo name="pencil" size={24} color="black" />
                 </TouchableOpacity>
               </View> 
@@ -122,7 +200,7 @@ function ProfileScreen() {
           </View>
 
           {/* Text Inputs Part */}
-          <View style={{flex:4, backgroundColor:'pink'}}>
+          <View style={{flex:4, backgroundColor:'white'}}>
             <View style={{flex:1, backgroundColor:'white', marginHorizontal:30}}>
               
               <View style={{flex:1, borderBottomColor:'gray', borderBottomWidth:2, flexDirection:'column', justifyContent:'center'}}>
@@ -152,7 +230,7 @@ function ProfileScreen() {
           </View>
 
           {/* Buttons Part */}
-          <View style={{flex:2.5, backgroundColor:'yellow', justifyContent:'center', alignItems:'center'}}>
+          <View style={{flex:2.5, backgroundColor:'white', justifyContent:'center', alignItems:'center'}}>
 
             {/* Edit Profile Button */}
             <TouchableOpacity 
