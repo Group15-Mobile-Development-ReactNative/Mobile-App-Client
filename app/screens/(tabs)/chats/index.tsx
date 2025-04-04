@@ -4,7 +4,7 @@ import HeaderBanner from '@/components/HeaderBanner';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { auth, db } from '@/firebase/firebaseConfig';
 import { useCallback, useEffect, useState } from 'react';
-import { collection, getDoc, getDocs, query, where, doc } from 'firebase/firestore';
+import { collection, getDoc, getDocs, query, where, doc, onSnapshot } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 
 function ChatsScreen() {    
@@ -106,6 +106,42 @@ function ChatsScreen() {
 
         },[])
     )
+
+
+
+    /* ****** TO RECIEVE A CALL ****** */
+    useEffect(() => {
+        if (!currentUserId) return;
+      
+        const q = query(
+          collection(db, 'calls'),
+          where('receiverId', '==', currentUserId),
+          where('isActive', '==', true)
+        );
+      
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            router.push({
+                pathname: '/screens/call/AudioCallScreen',
+                params: {
+                  channelName: data.channelName,
+                  token: data.token,
+                  callerId: data.callerId,
+                  receiverId: data.receiverId,
+                  callerName: data.callerName,
+                  callerPic: data.callerPic,
+                  receiverName: data.receiverName,
+                  receiverPic: data.receiverPic,
+                },
+              });              
+          });
+        });
+      
+        return () => unsubscribe();
+      }, [currentUserId]);
+      
+      
 
     return (
         <View>

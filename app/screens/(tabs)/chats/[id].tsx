@@ -1,12 +1,17 @@
 import { View, Text, Image, TouchableOpacity, FlatList, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Entypo from '@expo/vector-icons/Entypo';
-import { auth, db } from '@/firebase/firebaseConfig';
+import { auth, db, storage } from '@/firebase/firebaseConfig';
 import { useEffect, useRef, useState } from 'react';
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
+import * as ImagePicker from 'expo-image-picker';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import AntDesign from '@expo/vector-icons/AntDesign';
+
+import { AGORA_APP_ID, AGORA_TEMP_TOKEN, CHANNEL_NAME  } from '@/constants/agoraConfig';
 
 interface UserB{
   userid: string;
@@ -25,28 +30,50 @@ interface Message {
   sentAt: string;
 }
 
-function IndividualChatScreen() {
+function IndividualChatScreen() {  
 
-  //Selected User
+  //OTHER USERS ID CATCH
   const {id} = useLocalSearchParams();
   console.log("Clicked User is", id)
 
-  //Current User
+  //CURRENT USER ID FROM FIREBASE AUTH
   const currentUserEmail = auth.currentUser?.email
   const currentUserId = auth.currentUser?.uid
   console.log("Current User email: ", currentUserEmail);
   console.log("Current User id: ", currentUserId);
 
-  //State Variables
+
+
+  /* **** STATE VARIABLES **** */
+
+  // To get other user data (Gets by below useEffect)
   const [userBinfo, setUserBinfo]= useState<UserB|null>(null)
-  console.log('userBinfo ', userBinfo);
+  console.log('userBinfo: ', userBinfo);
 
-  const [inputMessage, setInputMessage] = useState<string>('')
-  console.log(inputMessage)
-
-  
-  // To get current user data
+  // To get current user data (Gets by below useEffect)
   const [currentUserInfo, setCurrentUserInfo]= useState<any>(null)
+  console.log('currentUserInfo: ', currentUserInfo);
+
+  // To save current send message
+  const [inputMessage, setInputMessage] = useState<string>('')
+  console.log("Just now inputted message: ",inputMessage)
+
+  // to detect FlatList Scrolling
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
+
+
+
+  /* **** TO SCROLLED INTO BOTTOM OF THE SCREEN **** */
+
+  const flatListRef = useRef<FlatList>(null);
+
+
+
+
+
+  /* **** LOAD CURRENT USER ALL DATA FROM FIREBASE **** */
+  
   useEffect(()=>{
     
     const fetchCurrentUser = async()=>{
@@ -71,7 +98,7 @@ function IndividualChatScreen() {
 
 
 
-
+  /* **** LOAD OTHER USER ALL DATA FROM FIREBASE **** */
 
   useEffect(()=>{    
     const fetchUserB = async ()=>{
@@ -105,13 +132,12 @@ function IndividualChatScreen() {
 
 
 
-  /* ****** Send Button Click ****** */
+
+  /* ****** SEND BUTTON CLICK - POST MESSAGE ****** */
 
   const generateChatId = (currentUser:string|undefined, selectedUser:string|undefined):string=>{
     return [currentUser,selectedUser].sort().join('_')    
   }
-  //const generatedChatId= generateChatId(currentUserId, id.toString())
-  //console.log("Generated Chat Id: ", generatedChatId)
 
   const handleMessageSend = async ()=>{   
 
@@ -177,29 +203,26 @@ function IndividualChatScreen() {
       });
 
       setInputMessage('')
+
+      // After sennding message scroll down to the bottom of the chat
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
     }
     catch(error){
       console.log(error)
     }
   }
 
-  /* NEED TO DELETE
 
-  const userBinfo = {
-      userB:'Shane Dinod',
-      userBprofileImageUrl:'https://capecoraltech.edu/wp-content/uploads/2016/01/tutor-8-3.jpg',
-    }*/
+
+
   
-    /*
-    const currentUserId = 'user001'; // Me (logged-in user)
-    const otherUserId = 'user002';   // Shane (the other user)
-    const chatId = 'chat001';        // Shared chat ID
-    // */
 
+    /* ****** GETS ALL MESSAGES OF CURRENT USER AND OTHER USER - GET MESSAGES ****** */
 
-    /* Messages Getting Part */   
-    
     const [messagesList, setMessagesList] = useState<Message[]>([])
+    console.log("messages list is: ", messagesList)
     
     useEffect(()=>{
 
@@ -237,59 +260,218 @@ function IndividualChatScreen() {
 
     },[currentUserId, userBinfo, inputMessage])
 
-    /* NEED TO DELETE
 
-    const messages = [
-      {
-        messageId: 'msg1',
-        chatId: 'chat001',
-        senderId: 'user001',
-        text: 'Hey Shane, how are you?',
-        imageUrl: null,
-        fileUrl: null,
-        sentAt: '09:00',
-        type: 'text',
-      },
-      {
-        messageId: 'msg2',
-        chatId: 'chat001',
-        senderId: 'user002',
-        text: 'Hi! I’m good, thanks! What about you?',
-        imageUrl: null,
-        fileUrl: null,
-        sentAt: '09:02',
-        type: 'text',
-      },
-      {
-        messageId: 'msg3',
-        chatId: 'chat001',
-        senderId: 'user001',
-        text: 'Doing great! Wanna catch up later?',
-        imageUrl: null,
-        fileUrl: null,
-        sentAt: '09:05',
-        type: 'text',
-      },
-      {
-        messageId: 'msg4',
-        chatId: 'chat001',
-        senderId: 'user002',
-        text: 'Sure, let’s meet at 6?',
-        imageUrl: null,
-        fileUrl: null,
-        sentAt: '09:06',
-        type: 'text',
-      },
-    ];*/
-
-    const flatListRef = useRef<FlatList>(null);
-
-    useEffect(() => {
-      if (messagesList.length > 0) {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }
-    }, [messagesList]);
     
+
+    
+    
+    /* ****** TO UPLOAD A FILE(IMAGE) ****** */
+
+    const handleUploadFile = async ()=>{
+      try{
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing:true,
+          aspect:[4,4],
+          quality:0.4,
+        })
+        console.log("image result is ", result);
+
+
+        if (!result.canceled && currentUserId){
+          const imageUri = result.assets && result.assets[0].uri;
+          const response = await fetch(imageUri);
+          const blob = await response.blob();
+
+          const filename = `${Date.now()}_${currentUserId}.jpg`
+          const storageRef = ref(storage, `chatImages/${filename}`)
+          await uploadBytes(storageRef, blob)
+
+          
+          // Add message with image URL
+          const downloadURL = await getDownloadURL(storageRef)
+          const generatedChatId = generateChatId(currentUserId, userBinfo?.userid);
+
+          await addDoc(collection(db,"messages"), {
+            chatId: generatedChatId,
+            senderId: currentUserId,
+            text: '',
+            imageUrl: downloadURL,
+            fileUrl: null,
+            sentAt: serverTimestamp(),
+          })
+
+          // Update the last message info in chats collection
+          const existingChatDoc = await getDoc(doc(db, "chats", generatedChatId));
+          const existingData = existingChatDoc.data();
+
+          await updateDoc(doc(db,"chats",generatedChatId),{
+            lastMessage: "📷 Image",
+            lastMessageTime: serverTimestamp(),
+            unreadA: existingData?.userA === currentUserId 
+              ? 0 
+              : (existingData?.unreadA || 0) + 1,
+            unreadB: existingData?.userB === currentUserId 
+              ? 0 
+              : (existingData?.unreadB || 0) + 1,
+          })
+          
+          // Update the Messages List State (to update the UI)
+          setMessagesList((prev)=>[
+            ...prev,
+            {
+              messageId: Date.now().toString(),  //This is something temporally add to the state. Message ID is automatilly generated when we add Image to firebase.
+              chatId: generatedChatId,
+              senderId: currentUserId,
+              text: '',
+              imageUrl: downloadURL,
+              fileUrl: null,
+              sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            }
+          ])
+
+          // After sennding message scroll down to the bottom of the chat
+          setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: true });
+          }, 100);
+
+        } 
+
+      }
+      catch(error){
+        console.log(error);
+      }
+    }
+
+
+
+    /* ****** TO OPEN CAMERA AND UPLOAD IMAGE ****** */
+    const handleOpenCamera = async()=>{
+      try{
+        const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+        if(permissionResult.granted === false){
+          alert("Camera access is required to take photos")
+          return;
+        }
+
+        const result = await ImagePicker.launchCameraAsync({
+          allowsEditing:true,
+          aspect:[4,4],
+          quality:0.4
+        })        
+        console.log("camera image result is ", result);
+
+        if(!result.canceled && currentUserId){
+          const imageUri = result.assets[0].uri
+          const response = await fetch(imageUri)
+          const blob = await response.blob();
+
+          const filename = `${Date.now()}_${currentUserId}.jpg`;
+          const storageRef = ref(storage, `chatImages/${filename}`);
+          await uploadBytes(storageRef, blob);
+
+          
+
+          // add the image to the "messages" collection
+          const downloadURL = await getDownloadURL(storageRef);
+          const generatedChatId = generateChatId(currentUserId, userBinfo?.userid);
+
+          await addDoc(collection(db, "messages"), {
+            chatId: generatedChatId,
+            senderId: currentUserId,
+            text:'',
+            imageUrl: downloadURL,
+            fileUrl:null,
+            sentAt: serverTimestamp(),
+          })
+
+          // Update the last message info in chats collection
+          const existingChatDoc = await getDoc(doc(db, "chats", generatedChatId));
+          const existingData = existingChatDoc.data();
+
+          await updateDoc(doc(db,"chats",generatedChatId),{
+            lastMessage: "📷 Image",
+            lastMessageTime: serverTimestamp(),
+            unreadA: existingData?.userA === currentUserId 
+              ? 0 
+              : (existingData?.unreadA || 0) + 1,
+            unreadB: existingData?.userB === currentUserId 
+              ? 0 
+              : (existingData?.unreadB || 0) + 1,
+          })
+
+          // Update the Messages List State (to update the UI)
+          setMessagesList((prev)=>[
+            ...prev,
+            {
+              messageId: Date.now().toString(),  //This is something temporally add to the state. Message ID is automatilly generated when we add Image to firebase.
+              chatId: generatedChatId,
+              senderId: currentUserId,
+              text: '',
+              imageUrl: downloadURL,
+              fileUrl: null,
+              sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            }
+          ])
+
+          // After sennding message scroll down to the bottom of the chat
+          setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: true });
+          }, 100);
+
+        }
+
+      }
+
+      catch(error){
+        console.log(error)
+      }
+    }
+
+
+
+    /* ****** TO MAKE A CALL ****** */
+    const handleAudioCall = async () => {
+      const receiverId = userBinfo?.userid
+      const receiverName = userBinfo?.displayName 
+      const receiverPic = userBinfo?.profilePic
+
+      const callerName = currentUserInfo.displayName
+      const callerPic = currentUserInfo.profilePic 
+    
+      router.push({
+        pathname: '/screens/call/AudioCallScreen',
+        params: {
+          channelName: CHANNEL_NAME.trim(),
+          token: AGORA_TEMP_TOKEN,
+          callerId: currentUserId,
+          callerName: callerName,
+          callerPic:callerPic,
+          receiverId: receiverId,
+          receiverName:receiverName,
+          receiverPic:receiverPic
+        },
+      });
+    
+      if (receiverId) {
+        await setDoc(doc(db, 'calls', receiverId), {
+          callerId: currentUserId,
+          receiverId: receiverId,
+          channelName: CHANNEL_NAME.trim(),
+          token: AGORA_TEMP_TOKEN,
+          isActive: true,
+          createdAt: serverTimestamp(),
+          callerName: callerName,
+          callerPic: callerPic,
+          receiverName: receiverName,
+          receiverPic: receiverPic,
+        });
+        
+    };
+    };  
+
+    
+
 
 
   return (
@@ -322,7 +504,8 @@ function IndividualChatScreen() {
             <TouchableOpacity>
             <Ionicons name="videocam-outline" size={28} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity
+             onPress={handleAudioCall}>
               <Ionicons name="call-outline" size={24} color="black" />
             </TouchableOpacity>
           </View>   
@@ -331,16 +514,44 @@ function IndividualChatScreen() {
 
         {/* Chat Body */}
         <View style={{flex:7, backgroundColor:'#98FB98', flexDirection:'column'}}>
+            
             <FlatList 
               ref={flatListRef}
               data={messagesList}
+              //To scroll down to the bottom of the chat after sending a message / image (Added this into related functions: "handleUploadFile" and "handleMessageSend" functions)
+              onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+              onLayout={() => {
+                flatListRef.current?.scrollToEnd({ animated: false });
+              }}
+
+              //To update the state to detect when user scrolling
+              onScrollBeginDrag={() => setShowScrollToBottom(true)}
+              onScrollEndDrag={() => {
+                // Optional delay to hide button after scroll ends
+                setTimeout(() => setShowScrollToBottom(false), 3000);
+              }}
+              scrollEventThrottle={16}
+              
               renderItem={({item})=> {
                 const isSender = item.senderId === currentUserId;
 
                 return (
                   <View style={{ flexDirection: 'row', justifyContent: isSender ? 'flex-end' : 'flex-start', paddingHorizontal: 10, marginVertical: 5 }}>
                     <View style={{ maxWidth: '75%', backgroundColor: isSender ? '#4A90E2' : '#E5E5EA', borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}>
-                      <Text style={{ color: isSender ? 'white' : 'black', fontSize: 16 }}>{item.text}</Text>
+                      {/* Text Message */}
+                      {item.text? 
+                      (<Text style={{ color: isSender ? 'white' : 'black', fontSize: 16 }}>{item.text}</Text>) : null}
+
+                      {/* Image Message */}
+                      {item.imageUrl ? 
+                      (<Image 
+                          source={{ uri: item.imageUrl }}
+                          style={{ width: 180, height: 180, borderRadius: 10, marginTop: item.text ? 10 : 0 }}
+                          resizeMode="cover"
+                        />
+                      ) : null}
+
+                      {/* Time */}
                       <Text style={{ color: isSender ? '#D0E6FF' : '#555', fontSize: 10, marginTop: 5, textAlign: 'right' }}>{item.sentAt}</Text>
                     </View>
                   </View>
@@ -348,6 +559,17 @@ function IndividualChatScreen() {
             />
         </View>
 
+        {/* Floating Scroll-to-Bottom Button - if "showScrollToBottom" ==true (triggers when FlatList in being scrolled) */}
+        {
+          showScrollToBottom && (
+            <TouchableOpacity
+              onPress={() => flatListRef.current?.scrollToEnd({ animated: true })}
+              style={{position: 'absolute', bottom: 80, right: 20, backgroundColor: '#AAFF00', opacity:0.7, borderRadius: 25, padding: 12, elevation: 5, shadowColor: '#000', shadowOpacity: 0.2, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4,
+              }}>
+              <AntDesign name="arrowdown" size={24} color="white" />
+            </TouchableOpacity>
+          )
+        }     
 
 
 
@@ -357,19 +579,21 @@ function IndividualChatScreen() {
         <View style={{ flexDirection:'row', bottom:0, backgroundColor:'white', paddingVertical:10, paddingHorizontal: 10 }}>
 
           {/* Text Input */}
-          <View style={{flex:8, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:15, position:'relative'}}>
+          <View style={{flex:8, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:10, position:'relative'}}>
             <TextInput
               placeholder='Type a message'
-              style={{borderWidth:1, borderColor:'black', width:'100%', borderRadius:10, paddingRight:60}}
+              style={{borderWidth:1, borderColor:'black', width:'100%', borderRadius:10, paddingRight:60, height:40}}
               value={inputMessage}
               onChangeText={setInputMessage}
             />
             {/* Attach Icons */}
             <View style={{position:'absolute', flexDirection:'row', right:20, gap:10}}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleOpenCamera}>
                 <Entypo name="camera" size={20} color="gray" />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleUploadFile}>
                 <Feather name="paperclip" size={20} color="gray" />
               </TouchableOpacity>        
             </View>
