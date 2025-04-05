@@ -1,10 +1,11 @@
 import { View, Text, Switch, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import HeaderBanner from '@/components/HeaderBanner';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
+import ThemeContext from '@/context/ThemeContext';
 
 
 function SettingsScreen() {
@@ -13,8 +14,16 @@ function SettingsScreen() {
   const [darkMode, setDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
+  const {theme, setTheme} = useContext(ThemeContext);
+
+  const handleThemeSwitch = ()=>{
+    setDarkMode(!darkMode)
+
+    setTheme(theme==='light'?'dark':'light')
+  }
+
   return (
-    <View>
+    <View style={{flex: 1, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212'}}>
 
       {/* Header Part */}
       <HeaderBanner />
@@ -22,12 +31,12 @@ function SettingsScreen() {
       {/* Dark Mode Row */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 40, marginTop: 40 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Ionicons name="moon" size={25} color="#3A888D" />
-          <Text style={{ marginLeft: 20 }}>Dark Mode</Text>
+          <Ionicons name="moon" size={25} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+          <Text style={{ marginLeft: 20, color: theme === 'light' ? '#000' : '#FFF' }}>Dark Mode</Text>
         </View>
         <Switch
           value={darkMode}
-          onValueChange={setDarkMode}
+          onValueChange={handleThemeSwitch}
           thumbColor={darkMode ? "#3A888D" : "#f4f3f4"}
           trackColor={{ false: "#767577", true: "#81b0ff" }}
         />
@@ -39,16 +48,16 @@ function SettingsScreen() {
       style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 40, marginTop: 60,}}
       >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-       <MaterialIcons name="translate" size={25} color="#3A888D" />
-       <Text style={{ marginLeft: 20 }}>Language</Text>
+       <MaterialIcons name="translate" size={25} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+       <Text style={{ marginLeft: 20, color: theme === 'light' ? '#000' : '#FFF' }}>Language</Text>
       </View>
       <Ionicons name="chevron-forward" size={20} color="#999" />
     </TouchableOpacity>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 40, marginTop: 60 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Ionicons name="notifications" size={24} color="#3A888D" />
-          <Text style={{ marginLeft: 20 }}>Notifications</Text>
+          <Ionicons name="notifications" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+          <Text style={{ marginLeft: 20, color: theme === 'light' ? '#000' : '#FFF' }}>Notifications</Text>
         </View>
         <Switch
           value={notificationsEnabled}
@@ -59,28 +68,28 @@ function SettingsScreen() {
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 50 }}>
-        <View style={{ flex: 1, height: 2, backgroundColor: '#d3d3d3', marginHorizontal: 40 }} />
+        <View style={{ flex: 1, height: 2, backgroundColor: theme === 'light' ? '#D3D3D3' : '#333', marginHorizontal: 40 }} />
       </View>
 
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
-        <Ionicons name="newspaper" size={24} color="#3A888D" />
-        <Text style={{ marginLeft: 20, marginTop: 5 }}>Terms of Service</Text>
+        <Ionicons name="newspaper" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+        <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>Terms of Service</Text>
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
-        <MaterialIcons name="policy" size={24} color="#3A888D" />
-        <Text style={{ marginLeft: 20, marginTop: 5 }}>Privacy Policy</Text>
+        <MaterialIcons name="policy" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+        <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>Privacy Policy</Text>
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
-        <Feather name="help-circle" size={24} color="#3A888D" />
-        <Text style={{ marginLeft: 20, marginTop: 5 }}>Help Center</Text>
+        <Feather name="help-circle" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+        <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>Help Center</Text>
       </View>
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
-        <Ionicons name="layers-outline" size={24} color="#3A888D" />
-        <Text style={{ marginLeft: 20, marginTop: 5 }}>About</Text>
+        <Ionicons name="layers-outline" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
+        <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>About</Text>
       </View>
 
     </View>

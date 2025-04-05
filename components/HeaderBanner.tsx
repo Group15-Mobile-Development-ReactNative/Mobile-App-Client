@@ -1,9 +1,13 @@
-import React from 'react';
+import ThemeContext from '@/context/ThemeContext';
+import React, { useContext } from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
 
 export default function HeaderBanner() {
+  const {theme} = useContext(ThemeContext);
+  //onsole.log('benner:', theme);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme ==='light'?'white':'#121212'}]}>
       <Image
         source={require('../assets/header-images/Header-Background.png')}
         style={styles.background}

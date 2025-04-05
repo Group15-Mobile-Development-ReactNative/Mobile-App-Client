@@ -6,7 +6,11 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 // To Apply Fonts "Madimi One" ---------- Start
 import { useFonts } from 'expo-font';
 import { View, ActivityIndicator } from 'react-native';
+import { useState } from "react";
+import ThemeContext from "@/context/ThemeContext";
 // To Apply Fonts "Madimi One" ---------- End
+
+
 
 function TabsLayOut() {
 
@@ -14,6 +18,12 @@ function TabsLayOut() {
   const [fontsLoaded] = useFonts({
     'MadimiOne-Regular': require('../../../assets/fonts/MadimiOne-Regular.ttf'),
   });
+
+  // USE CONTEXT PART
+  const [theme , setTheme] = useState('light')
+  console.log('Theme is: ', theme)
+
+  
 
   if (!fontsLoaded) {
     return (
@@ -24,7 +34,11 @@ function TabsLayOut() {
   }
   // To Apply Fonts "Madimi One" ---------- End
 
+
+  
+
   return (
+    <ThemeContext.Provider value={{theme,setTheme}}>
     <Tabs>
         <Tabs.Screen name="chats" options={{
             title:'Chats',
@@ -55,6 +69,7 @@ function TabsLayOut() {
           href:null
         }} />
     </Tabs>
+    </ThemeContext.Provider>
   );
 }
 

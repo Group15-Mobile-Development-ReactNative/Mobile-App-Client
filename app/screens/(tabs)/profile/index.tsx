@@ -7,12 +7,13 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { auth, db, storage } from '@/firebase/firebaseConfig';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useContext } from 'react';
 import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
+import ThemeContext from '@/context/ThemeContext';
 
 
 interface User{
@@ -29,13 +30,15 @@ function ProfileScreen() {
 
   const router = useRouter();
 
+  const {theme} = useContext(ThemeContext);
+
   //Curret User Data
   const currentUser = auth.currentUser?.uid
   console.log("Current User is: ",currentUser);
 
   //State Variables
   const [profileData, setProfileData] = useState< User| null>(null)
-  console.log("profile Dat is: ", profileData)
+  console.log("profile Data is: ", profileData)
   const [newProfilePic, setNewProfilePic] = useState('')
   const [triggeredWhenSave, setTriggeredWhenSave] = useState(false)
 
@@ -199,13 +202,13 @@ function ProfileScreen() {
       {/* Header Part */}
       <HeaderBanner />
 
-      <View style={{flex:2, backgroundColor:'white'}}>    
+      <View style={{flex:2, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212'}}>    
 
           {/* Profile Pic Part */}
           <ScrollView contentContainerStyle={{ top:20, justifyContent: 'center', alignItems: 'center' }}>
-            <View style={{flex:3, backgroundColor:'white', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
+            <View style={{flex:3, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
               
-              <View style={{position:'relative', backgroundColor:'white'}}>
+              <View style={{position:'relative', backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212'}}>
                 <View style={{alignItems:'flex-end'}}>
                   <Image
                     source={{ uri: profileData?.profilePic }}
@@ -225,29 +228,29 @@ function ProfileScreen() {
           </ScrollView>
 
           {/* Text Inputs Part */}
-          <View style={{flex:4, backgroundColor:'white'}}>
-            <View style={{flex:1, backgroundColor:'white', marginHorizontal:30}}>
+          <View style={{flex:4, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212'}}>
+            <View style={{flex:1, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212', marginHorizontal:30}}>
               
-              <View style={{flex:1, borderBottomColor:'gray', borderBottomWidth:2, flexDirection:'column', justifyContent:'center'}}>
-                <Text style={{marginTop:10, color:'rgb(95, 94, 94)'}}>Display Name</Text>
+              <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2, flexDirection:'column', justifyContent:'center'}}>
+                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>Display Name</Text>
                 <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                   <FontAwesome5 name="user-circle" size={24} color="gray" />
-                  <Text>{profileData?.displayName}</Text>
+                  <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.displayName}</Text>
                 </View>
               </View>
 
-              <View style={{flex:1, borderBottomColor:'gray', borderBottomWidth:2}}>
-                <Text style={{marginTop:10, color:'rgb(95, 94, 94)'}}>Email</Text>
+              <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2}}>
+                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>Email</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                     <FontAwesome5 name="user-circle" size={24} color="gray" />
-                    <Text>{profileData?.email}</Text>
+                    <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.email}</Text>
                   </View>
                 </View>
-              <View style={{flex:1, borderBottomColor:'gray', borderBottomWidth:2}}>
-                <Text style={{marginTop:10, color:'rgb(95, 94, 94)'}}>Status</Text>
+              <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2}}>
+                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>Status</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                     <FontAwesome5 name="user-circle" size={24} color="gray" />
-                    <Text>{profileData?.status}</Text>
+                    <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.status}</Text>
                   </View>
                 </View>
             </View>
@@ -255,7 +258,7 @@ function ProfileScreen() {
           </View>
 
           {/* Buttons Part */}
-          <View style={{flex:2.5, backgroundColor:'white', justifyContent:'center', alignItems:'center'}}>
+          <View style={{flex:2.5, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212' , justifyContent:'center', alignItems:'center'}}>
 
             {/* Edit Profile Button */}
             <TouchableOpacity 

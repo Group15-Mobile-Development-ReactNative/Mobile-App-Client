@@ -3,11 +3,14 @@ import { useRouter } from 'expo-router';
 import HeaderBanner from '@/components/HeaderBanner';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { auth, db } from '@/firebase/firebaseConfig';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { collection, getDoc, getDocs, query, where, doc, onSnapshot } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
+import ThemeContext from '@/context/ThemeContext';
 
 function ChatsScreen() {    
+
+    const {theme} = useContext(ThemeContext);
     
     const router = useRouter();
 
@@ -144,7 +147,7 @@ function ChatsScreen() {
       
 
     return (
-        <View>
+        <View style={{flex:1,flexDirection:'column' ,backgroundColor: theme ==='light'?'white':'#121212'}}>
 
           {/* Header Part */}
           <HeaderBanner />
@@ -160,30 +163,30 @@ function ChatsScreen() {
           <FlatList
               data={chatsList}
               renderItem ={ ({item})=>(
-                  <View style={{flex:1,flexDirection:'column' ,backgroundColor:'white'}}>
+                  <View style={{flex:1,flexDirection:'column' ,backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
                       <TouchableOpacity
-                          style={{height:80, paddingBottom:10, paddingTop:10, borderBottomColor:'gray', borderBottomWidth:1}}
+                          style={{height:80, paddingBottom:10, paddingTop:10, borderBottomColor:theme ==='light'?'#2C2C2C':'#E0E0E0', borderBottomWidth:1}}
                           onPress={()=>router.push(`/screens/(tabs)/chats/${item.userBid}`)}
 
                           >
-                          <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor:'white'}}>
+                          <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
                               <View style={{flex:1, flexDirection:'row', marginLeft:10}}>
                                   <Image
                                       source={{ uri: item.userBprofileImageUrl }}
                                       style={{width:50, height:50, borderRadius:20}}
                                   />  
                               </View>
-                              <View style={{flex:7, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor:'white', marginLeft:15}}>
-                                  <Text style={{fontWeight:'bold'}}>{item.userB}</Text>
-                                  <Text style={{fontSize:10, marginTop:10}}>{item.lastMessage}</Text>
+                              <View style={{flex:7, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212', marginLeft:15}}>
+                                  <Text style={{fontWeight:'bold', color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.userB}</Text>
+                                  <Text style={{fontSize:10, marginTop:10, color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.lastMessage}</Text>
                               </View>
                               <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
                                   <View style={{flex:1, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-end'}}>
-                                      <Text style={{fontSize:10}}>{item.lastMessageTime.toString().slice(16,21)}</Text>
+                                      <Text style={{fontSize:10, color:theme ==='light'?'black':'white'}}>{item.lastMessageTime.toString().slice(16,21)}</Text>
                                   </View>
                                   
-                                  <View style={item.unreadB!=0?{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', backgroundColor:'green', width:15, height:15, borderRadius:5, marginTop:15}: undefined}>
-                                      <Text style={{fontSize:10, color:'white'}}>{item.unreadB}</Text>
+                                  <View style={item.unreadB!=0?{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', backgroundColor:theme ==='light'?'#25D366':'#25D366', width:15, height:15, borderRadius:5, marginTop:15}: undefined}>
+                                      <Text style={{fontSize:10, color:theme ==='light'?'white':'black'}}>{item.unreadB}</Text>
                                   </View>                                    
                               </View>                                     
                               
