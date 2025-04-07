@@ -1,9 +1,10 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter  } from 'expo-router';
 import Toast from 'react-native-toast-message'; // Import Toast
 import ThemeContext from "@/context/ThemeContext";
 import LanguageContext from "@/context/LanguageContext";
-import { useContext, useState } from "react";
-
+import { useContext, useEffect, useState } from "react";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase/firebaseConfig';
 
 export default function RootLayout() {
 
@@ -14,6 +15,17 @@ export default function RootLayout() {
   const [language, setLanguage] = useState('en')
   console.log('Language is in root: ', language)
 
+  const router = useRouter();
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        console.log('User logged out — redirecting to login');
+        router.replace('/screens/auth-screens/login');
+      }
+    });
+
+    return () => unsubscribe(); // cleanup
+  }, []);
   return (
 
     <ThemeContext.Provider value={{theme,setTheme}}>

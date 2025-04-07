@@ -7,30 +7,40 @@ import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/firebaseConfig";
+import Toast from 'react-native-toast-message';
 
 
 function LoginScreen() {
 
     const router = useRouter();
 
-    const [rememberMe, setRememberMe] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errorResult, setErrorResult] = useState('')
 
-    useEffect(()=>{
-        setErrorResult('')
-    }, [email, password])
 
     const handleLogin = async ()=>{
         console.log('buton clicked')
         try{
             await signInWithEmailAndPassword(auth,email,password)
-            router.navigate('/screens/(tabs)/chats')
+            Toast.show({
+                type: 'success',
+                text1: 'Success 😃',
+                text2: 'Login successful',
+            });
+            setTimeout(() => {
+                router.navigate('/screens/(tabs)/chats')
+            }
+            , 2000)
+
+            
 
         }
         catch(error:any){
-            setErrorResult(error.toString())
+            Toast.show({
+                type: 'error',
+                text1: 'Error 😢',
+                text2: error.message,
+            });
         }
         
     }
@@ -83,24 +93,18 @@ function LoginScreen() {
                                 />
                         </View>
 
-                        <Text style={{color:'red'}}>{errorResult}</Text>
-
                         <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 50, marginLeft: 0 }}>
-                    <TouchableOpacity
-                        onPress={() => setRememberMe(!rememberMe)}
-                        style={{ height: 24, width: 24, borderWidth: 2, borderColor: 'gray', alignItems: 'center', justifyContent: 'center', borderRadius: 4}}>
-                        {rememberMe && <MaterialIcons name="check" size={20} color="blue" />}
-                    </TouchableOpacity>
-                    <Text style={{ marginLeft: 10, marginTop: 3, fontSize: 17 }}>Remember Me</Text>
                     
-                    <TouchableOpacity 
-                    style= {{marginLeft: 100, marginTop: -15}}
-                    onPress={handleLogin}>
-                      <LinearGradient colors={['#4EF0A1', '#42A1EC']}
-                        style={{ width: 60, height: 60, borderRadius: 35, justifyContent: 'center', alignItems: 'center', elevation: 4}}>
-                        <Feather name="arrow-right" size={40} color="white" />
-                      </LinearGradient>
-                    </TouchableOpacity>
+                    
+                        <TouchableOpacity 
+                            style= {{marginLeft: 100, marginTop: -15, right: 0, position: 'absolute', justifyContent: 'center', alignItems: 'center'}}
+                            activeOpacity={0.8}
+                            onPress={handleLogin}>
+                            <LinearGradient colors={['#4EF0A1', '#42A1EC']}
+                                style={{ width: 60, height: 60, borderRadius: 35, justifyContent: 'center', alignItems: 'center', elevation: 4}}>
+                                <Feather name="arrow-right" size={40} color="white" />
+                            </LinearGradient>
+                        </TouchableOpacity>
                 </View>
                     </View>
                 </View>
