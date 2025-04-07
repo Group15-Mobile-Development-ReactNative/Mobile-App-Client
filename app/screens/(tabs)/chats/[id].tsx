@@ -70,6 +70,12 @@ function IndividualChatScreen() {
   // to detect FlatList Scrolling
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
 
+  
+  // To delete message
+  const [deletingId, setDeletingId] = useState<string|null>(null)
+  console.log("Deleting ID: ", deletingId)
+
+
 
 
 
@@ -231,7 +237,7 @@ function IndividualChatScreen() {
     /* ****** GETS ALL MESSAGES OF CURRENT USER AND OTHER USER - GET MESSAGES ****** */
 
     const [messagesList, setMessagesList] = useState<Message[]>([])
-    console.log("messages list is: ", messagesList)
+    //console.log("messages list is: ", messagesList)
     
     useEffect(()=>{
 
@@ -479,6 +485,44 @@ function IndividualChatScreen() {
     };
     };  
 
+
+    /* ****** TO DELETE A MESAGE ****** */
+    const handleDeleteMessage = async (messageId: string) => {
+      try {
+        await updateDoc(doc(db, "messages", messageId), {
+          text: "[This message was deleted]",
+          imageUrl: null,
+          fileUrl: null,
+        });
+
+        //relaod the page to see the changes
+        const generatedChatId = generateChatId(currentUserId, userBinfo?.userid);
+        const q = await query(collection(db,"messages"), where("chatId", "==", generatedChatId), orderBy("sentAt","asc"))
+        const messagesSnap = await getDocs(q);
+        const messages = messagesSnap.docs.map((element)=>{
+          return{
+            messageId: element.id,
+            chatId: element.data().chatId,
+            senderId: element.data().senderId,
+            text: element.data().text,
+            imageUrl: element.data().imageUrl || null,
+            fileUrl: element.data().fileUrl || null,
+            sentAt:  element.data().sentAt?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) || ''
+          }
+        })
+        setMessagesList(messages);
+        console.log("Messages List after delete: ",messages)
+        setDeletingId(null); // Reset deletingId after deletion
+      } 
+      
+      catch (error) {
+        console.error("Error deleting message: ", error);
+      }
+    };
+
+
+
+    
     
 
 
@@ -548,7 +592,52 @@ function IndividualChatScreen() {
 
                 return (
                   <View style={{ flexDirection: 'row', justifyContent: isSender ? 'flex-end' : 'flex-start', paddingHorizontal: 10, marginVertical: 5 }}>
-                    <View style={{ maxWidth: '75%', backgroundColor: isSender ? (theme === 'light' ? '#4A90E2' : '#2f80ed') : (theme === 'light' ? '#E5E5EA' : '#2b2b2b'), borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}>
+                    {/* If User is longPressed && if that is current user's message - Show Message  with Delete Button */}
+                    {deletingId === item.messageId ? (
+                      <View style={{ maxWidth: '75%', backgroundColor: isSender ? (theme === 'light' ? '#4A90E2' : '#2f80ed') : (theme === 'light' ? '#E5E5EA' : '#2b2b2b'), borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}>
+                        {/* Show Message within a View Component */}
+                        <View style={{ flexDirection: 'column', justifyContent: 'flex-start', alignItems: isSender ? 'flex-end' : 'flex-start' }}>
+                          {/* Text Message */}
+                          <Text style={{ color: isSender ? 'white' : theme === 'light' ? 'black' : '#f0f0f0', fontSize: 16 }}>{item.text}</Text>
+                          {/* Time */}
+                          <Text style={{ color: isSender ? (theme === 'light' ? '#D0E6FF' : '#aacfff') : (theme === 'light' ? '#555' : '#aaa'), fontSize: 10, marginTop: 5, textAlign: 'right' }}>{item.sentAt}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 5, gap: 10  }}>
+                          {/* Cancel Message Button */}
+                          <TouchableOpacity
+                            style={{ marginTop: 5, backgroundColor: 'gray', padding: 5, borderRadius: 10}}
+                            onPress={() => {
+                              setDeletingId(null)
+                            }}
+                          >
+                            <Text style={{ color: 'white', fontSize: 14 }}>{language==='en'?'Cancel':'Peruuta'}</Text>
+                          </TouchableOpacity>
+
+                          {/* Delete Message Button */}
+                          <TouchableOpacity 
+                            style={{ marginTop: 5, backgroundColor: 'red', padding: 5, borderRadius: 10 }}
+                            onPress={() => {
+                              // Handle delete message logic here
+                              handleDeleteMessage(item.messageId)
+                              setDeletingId(null)
+                            }}
+                          >
+                            <Text style={{ color: 'white', fontSize: 14 }}>{language==='en'?'Delete':'Poista'}</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    ) 
+                    :
+                    // If User is not editing - Show Message
+                    (<TouchableOpacity 
+                      style={{ maxWidth: '75%', backgroundColor: isSender ? (theme === 'light' ? '#4A90E2' : '#2f80ed') : (theme === 'light' ? '#E5E5EA' : '#2b2b2b'), borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}
+                      onLongPress={()=>{
+                        if (isSender) {
+                          console.log("Long Pressed (User's) Message ID: ", item.messageId);
+                          setDeletingId(item.messageId);
+                        }
+                      } }
+                      >
                       {/* Text Message */}
                       {item.text? 
                       (<Text style={{ color: isSender ? 'white' : theme === 'light' ? 'black' : '#f0f0f0', fontSize: 16 }}>{item.text}</Text>) : null}
@@ -564,7 +653,8 @@ function IndividualChatScreen() {
 
                       {/* Time */}
                       <Text style={{ color: isSender ? (theme === 'light' ? '#D0E6FF' : '#aacfff') : (theme === 'light' ? '#555' : '#aaa'), fontSize: 10, marginTop: 5, textAlign: 'right' }}>{item.sentAt}</Text>
-                    </View>
+                    </TouchableOpacity>)
+                    }
                   </View>
               )}}
             />
