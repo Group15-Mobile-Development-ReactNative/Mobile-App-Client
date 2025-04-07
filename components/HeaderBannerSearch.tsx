@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Image, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from 'expo-router';
+import ThemeContext from '@/context/ThemeContext';
+import LanguageContext from "@/context/LanguageContext";
 
 interface HeaderBannerSearchProps {
   searchValue: string;
@@ -10,9 +12,12 @@ interface HeaderBannerSearchProps {
 
 export default function HeaderBannerSearch({ searchValue, setSearchValue }: HeaderBannerSearchProps) { 
 
+  const {theme} = useContext(ThemeContext);
+  const {language} = useContext(LanguageContext)
+
   const router = useRouter();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme ==='light'?'white':'#121212'}]}>
       <Image
         source={require('../assets/header-images/Header-Background.png')}
         style={styles.background}
@@ -26,7 +31,7 @@ export default function HeaderBannerSearch({ searchValue, setSearchValue }: Head
         </TouchableOpacity>     
       </View>
       <TextInput
-        placeholder='Search'
+        placeholder={language==='en'?'Search':'Haku'}
         style={{position:'absolute', width:'75%', height:40, borderWidth:1, borderColor:'white', top:25, left:80, backgroundColor:'white', borderRadius:20}}
         value={searchValue}
         onChangeText={setSearchValue}

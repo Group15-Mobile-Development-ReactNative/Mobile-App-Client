@@ -3,9 +3,11 @@ import {KeyboardAvoidingView, Platform, Pressable,StyleSheet,Text,TextInput,Touc
 import Animated, {FadeIn,SlideInDown,SlideOutDown,} from 'react-native-reanimated';
 import Octicons from '@expo/vector-icons/Octicons';
 import { auth, db } from '@/firebase/firebaseConfig';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
+import ThemeContext from '@/context/ThemeContext';
+import LanguageContext from "@/context/LanguageContext";
 
 interface User{
   lastSeen: string,
@@ -20,6 +22,10 @@ interface User{
 
 
 export default function Modal() {
+
+  // Context
+  const {language} = useContext(LanguageContext)
+  const {theme} = useContext(ThemeContext);
 
   const router = useRouter();
 
@@ -168,46 +174,47 @@ export default function Modal() {
         exiting={SlideOutDown} // slide down when dismissed
         style={{
           width: '100%',
-          height: '58%',
+          height: '55%',
           justifyContent: 'flex-start',
-          backgroundColor: 'white',
+          backgroundColor: theme === 'light' ? 'white' : '#1e1e1e',
           borderTopEndRadius: 30,
           borderTopStartRadius: 30,
           padding: 0,
         }}>   
 
-        <ScrollView contentContainerStyle={{ top:20, justifyContent: 'center', alignItems: 'center', backgroundColor:'white' }}>
+        <ScrollView contentContainerStyle={{ top:20, justifyContent: 'center', alignItems: 'center', backgroundColor: theme === 'light' ? 'white' : '#1e1e1e' }}>
 
           <View style={{justifyContent: 'center', alignItems: 'center',bottom:18}}>
             <Octicons name="horizontal-rule" size={24} color="gray" />    
               
-            <Text style={{ fontWeight: 'bold', fontSize:15}}>Edit Profile</Text>
+            <Text style={{ fontWeight: 'bold', fontSize:15, color: theme === 'light' ? 'black' : 'white' }}>{language==='en'?'Edit Profile':'Muokkaa profiilia'}</Text>
           </View>
           
           
               
 
-          <View style={{flex:8, backgroundColor:'white', justifyContent:'center', alignItems:'flex-start', width:'90%', marginBottom:50, marginTop: 30 }}>
+          <View style={{flex:8, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', justifyContent:'center', alignItems:'flex-start', width:'90%', marginBottom:40, marginTop: 10 }}>
             
-            <Text style={{color:'gray'}}>Display Name</Text>
+            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc'}}>{language==='en'?'Display Name':'Näyttönimi'}</Text>
             <TextInput 
-              style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:15}}
+              style={{borderWidth:1, borderColor: theme === 'light' ? 'gray' : '#666', width:'100%', height:50, borderRadius:8, marginBottom:15, backgroundColor: theme === 'light' ? 'white' : '#2a2a2a', color: theme === 'light' ? 'black' : 'white', paddingHorizontal: 10}}
               placeholder=''
               value={userName}
               onChangeText={setUserName}
+              
             />
 
-            <Text style={{color:'gray'}}>Email</Text>
+            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc'}}>{language==='en'?'Email':'Sähköposti'}</Text>
             <TextInput 
-              style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:15}}
+              style={{borderWidth:1, borderColor: theme === 'light' ? 'gray' : '#666', width:'100%', height:50, borderRadius:8, marginBottom:15, backgroundColor: theme === 'light' ? 'white' : '#2a2a2a', color: theme === 'light' ? 'black' : 'white', paddingHorizontal: 10}}
               placeholder=''
               value={userEmail}
               onChangeText={setUserEmail}
             />
 
-            <Text style={{color:'gray'}}>Status</Text>
+            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc'}}>{language==='en'?'Status':'Status'}</Text>
             <TextInput 
-              style={{borderWidth:1, borderColor:'gray', width:'100%', height:50, borderRadius:8, marginBottom:0}}
+              style={{borderWidth:1, borderColor: theme === 'light' ? 'gray' : '#666', width:'100%', height:50, borderRadius:8, marginBottom:0, backgroundColor: theme === 'light' ? 'white' : '#2a2a2a', color: theme === 'light' ? 'black' : 'white', paddingHorizontal: 10}}
               placeholder=''
               value={userStatus}
               onChangeText={setUserStatus}
@@ -217,18 +224,18 @@ export default function Modal() {
 
 
 
-          <View style={{flex:2, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
+          <View style={{flex:2, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
             <TouchableOpacity
-              style={{backgroundColor:'#ECF9FF', width:130, height:50, borderRadius:20, justifyContent:'center', alignItems:'center'}}          
+              style={{backgroundColor: theme === 'light' ? '#ECF9FF' : '#2d2d2d', width:130, height:50, borderRadius:20, justifyContent:'center', alignItems:'center'}}          
               onPress={() => router.back()}>
-              <Text style={{color:'#3AB2E8', fontWeight:'bold', fontSize:15}}>Cancel</Text>
+              <Text style={{color:'#3AB2E8', fontWeight:'bold', fontSize:15}}>{language==='en'?'Cancel':'Peruuttaa'}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
-              style={{backgroundColor:'#46B5BD', width:130, height:50, borderRadius:30, justifyContent:'center', alignItems:'center'}}
+              style={{backgroundColor: theme === 'light' ? '#46B5BD' : '#278a91', width:130, height:50, borderRadius:30, justifyContent:'center', alignItems:'center'}}
               onPress={handleSave}
               >
-              <Text style={{color:'white', fontWeight:'bold', fontSize:17}}>Save</Text>
+              <Text style={{color:'white', fontWeight:'bold', fontSize:17}}>{language==='en'?'Save':'Tallentaa'}</Text>
             </TouchableOpacity>
           </View>    
         </ScrollView>

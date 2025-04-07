@@ -14,6 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import ThemeContext from '@/context/ThemeContext';
+import LanguageContext from "@/context/LanguageContext";
 
 
 interface User{
@@ -28,9 +29,14 @@ interface User{
 
 function ProfileScreen() {
 
+  // Context
+  const {language} = useContext(LanguageContext)
+  const {theme} = useContext(ThemeContext);
+
   const router = useRouter();
 
-  const {theme} = useContext(ThemeContext);
+  
+  
 
   //Curret User Data
   const currentUser = auth.currentUser?.uid
@@ -208,31 +214,33 @@ function ProfileScreen() {
           <ScrollView contentContainerStyle={{ top:20, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{flex:3, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212', flexDirection:'column', justifyContent:'center', alignItems:'center'}}>            
               
-              <View style={{position:'relative', backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212'}}>
+              <View style={{position: 'relative', width: 160, height: 160, borderRadius: 80, borderWidth: 4, borderColor: theme === 'light' ? '#4CAF50' : '#66BB6A', shadowColor: theme === 'light' ? '#000' : '#00FFC2', shadowOpacity: 0.2, shadowOffset: { width: 0, height: 4 }, shadowRadius: 6, elevation: 6,backgroundColor: theme === 'light' ? '#FFF' : '#1e1e1e'}}>
                 <View style={{alignItems:'flex-end'}}>
                   <Image
                     source={{ uri: profileData?.profilePic }}
                     style={{width:150, height:150, borderRadius:100}}
                   
                   />
+                  {/* Edit Icon */}
                   <TouchableOpacity 
-                    style={{position:'absolute', backgroundColor:'rgb(16, 197, 16)', borderRadius:100, padding:5}}
+                    style={{position:'absolute', backgroundColor: theme === 'light' ? '#4CAF50' : '#66BB6A', borderRadius:100, padding:5, borderWidth: 2, borderColor: theme === 'light' ? '#fff' : '#1e1e1e'}}
                     onPress={handleUpdateProfilePic}
                     >
                     <Entypo name="pencil" size={24} color="black" />
                   </TouchableOpacity>
                 </View> 
               </View>
-              <Text style={{fontWeight:'bold', fontSize:20}}>{profileData?.displayName}</Text>
+              {/* Name Text */}
+              <Text style={{ marginTop: 20, fontSize: 22, fontWeight: 'bold', color: theme === 'light' ? '#000' : '#FFF' }}>{profileData?.displayName}</Text>
             </View>
           </ScrollView>
 
           {/* Text Inputs Part */}
-          <View style={{flex:4, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212'}}>
+          <View style={{flex:4, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212',marginTop: -5}}>
             <View style={{flex:1, backgroundColor: theme === 'light' ? '#FFFFFF' : '#121212', marginHorizontal:30}}>
               
               <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2, flexDirection:'column', justifyContent:'center'}}>
-                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>Display Name</Text>
+                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>{language==='en'?'Display Name':'Näyttönimi'}</Text>
                 <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                   <FontAwesome5 name="user-circle" size={24} color="gray" />
                   <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.displayName}</Text>
@@ -240,14 +248,14 @@ function ProfileScreen() {
               </View>
 
               <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2}}>
-                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>Email</Text>
+                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>{language==='en'?'Email':'Sähköposti'}</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                     <FontAwesome5 name="user-circle" size={24} color="gray" />
                     <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.email}</Text>
                   </View>
                 </View>
               <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2}}>
-                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>Status</Text>
+                <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>{language==='en'?'Status':'Status'}</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
                     <FontAwesome5 name="user-circle" size={24} color="gray" />
                     <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.status}</Text>
@@ -262,24 +270,24 @@ function ProfileScreen() {
 
             {/* Edit Profile Button */}
             <TouchableOpacity 
-              style={{backgroundColor:'rgb(43, 148, 43)', paddingVertical:12, width:300, borderRadius:10, marginBottom:15}}
+              style={{backgroundColor: theme === 'light' ? '#4CAF50' : '#66BB6A', paddingVertical:12, width:300, borderRadius:10, marginBottom:15}}
               onPress={()=>router.navigate('/profile-modal')}
               >
               <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
                 <SimpleLineIcons name="pencil" size={20} color="white" />
-                <Text style={{fontSize:18, color:'white'}}>Edit Profile</Text>
+                <Text style={{fontSize:18, color:'white'}}>{language==='en'?'Edit Profile':'Muokkaa profiilia'}</Text>
               </View>
             </TouchableOpacity>
 
             {/* Logout Button */}
             <TouchableOpacity 
-              style={{backgroundColor:'rgb(255, 210, 210)', paddingVertical:12, width:300, borderRadius:10}}
+              style={{backgroundColor: theme === 'light' ? '#FFCDD2' : '#EF5350', paddingVertical:12, width:300, borderRadius:10}}
               onPress={handleLogout}
             >
               <View 
                 style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:20}}>
-                <AntDesign name="logout" size={20} color="red" />
-                <Text style={{fontSize:18, color:'red'}}>Logout</Text>
+                <AntDesign name="logout" size={20} color={theme === 'light' ? '#C62828' : '#FFCDD2'} />
+                <Text style={{fontSize:18, color: theme === 'light' ? '#C62828' : '#FFCDD2'}}>{language==='en'?'Logout':'Kirjaudu ulos'}</Text>
               </View>
             </TouchableOpacity>
           </View>

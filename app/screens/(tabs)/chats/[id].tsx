@@ -10,8 +10,11 @@ import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, s
 import * as ImagePicker from 'expo-image-picker';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import LanguageContext from "@/context/LanguageContext";
+import { useContext } from "react";
 
 import { AGORA_APP_ID, AGORA_TEMP_TOKEN, CHANNEL_NAME  } from '@/constants/agoraConfig';
+import ThemeContext from '@/context/ThemeContext';
 
 interface UserB{
   userid: string;
@@ -31,6 +34,12 @@ interface Message {
 }
 
 function IndividualChatScreen() {  
+
+  // Context
+  const {language} = useContext(LanguageContext)
+  const { theme } = useContext(ThemeContext);
+
+  
 
   //OTHER USERS ID CATCH
   const {id} = useLocalSearchParams();
@@ -476,18 +485,18 @@ function IndividualChatScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={{ flex: 1, }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={80}
     >
 
-      <View style={{flex:1, flexDirection:'column'}}>
+      <View style={{flex:1, flexDirection:'column',}}>
 
         {/* Chat Banner */}
-        <View style={{backgroundColor:'white', flexDirection:'row', height: 70}}>
+        <View style={{backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', flexDirection:'row', height: 70,}}>
 
           {/* Profile Pic Part */}
-          <View style={{flex:2, backgroundColor:'white'}}>
+          <View style={{flex:2, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', top:5}}>
             <Image
               source={{ uri: userBinfo?.profilePic }}
               style={{width:50, height:50, borderRadius:50, marginLeft:20, marginBottom:5}}
@@ -495,18 +504,18 @@ function IndividualChatScreen() {
           </View>
 
           {/* UserB Name Part */}
-          <View style={{flex:4.5, backgroundColor:'white', flexDirection:'column', justifyContent:'center', marginBottom:10, marginLeft:8}}>
-            <Text style={{fontSize:15, fontWeight:'bold'}}>{userBinfo?.displayName}</Text>
+          <View style={{flex:4.5, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', flexDirection:'column', justifyContent:'center', marginBottom:10, marginLeft:8}}>
+            <Text style={{fontSize:15, fontWeight:'bold', color: theme === 'light' ? 'black' : 'white'}}>{userBinfo?.displayName}</Text>
           </View>
 
           {/*Call Icons Part */}
-          <View style={{flex:3.5, backgroundColor:'white', flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
+          <View style={{flex:3.5, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', flexDirection:'row', justifyContent:'space-evenly', alignItems:'center'}}>
             <TouchableOpacity>
-            <Ionicons name="videocam-outline" size={28} color="black" />
+            <Ionicons name="videocam-outline" size={28} color={theme === 'light' ? 'black' : 'white'} />
             </TouchableOpacity>
             <TouchableOpacity
              onPress={handleAudioCall}>
-              <Ionicons name="call-outline" size={24} color="black" />
+              <Ionicons name="call-outline" size={24} color={theme === 'light' ? 'black' : 'white'} />
             </TouchableOpacity>
           </View>   
         </View>
@@ -531,16 +540,18 @@ function IndividualChatScreen() {
                 setTimeout(() => setShowScrollToBottom(false), 3000);
               }}
               scrollEventThrottle={16}
+
+              style={{ backgroundColor: theme === 'light' ? '#f4f4f4' : '#1a1a1a' }}
               
               renderItem={({item})=> {
                 const isSender = item.senderId === currentUserId;
 
                 return (
                   <View style={{ flexDirection: 'row', justifyContent: isSender ? 'flex-end' : 'flex-start', paddingHorizontal: 10, marginVertical: 5 }}>
-                    <View style={{ maxWidth: '75%', backgroundColor: isSender ? '#4A90E2' : '#E5E5EA', borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}>
+                    <View style={{ maxWidth: '75%', backgroundColor: isSender ? (theme === 'light' ? '#4A90E2' : '#2f80ed') : (theme === 'light' ? '#E5E5EA' : '#2b2b2b'), borderRadius: 20, padding: 10, borderBottomRightRadius: isSender ? 0 : 20, borderBottomLeftRadius: isSender ? 20 : 0 }}>
                       {/* Text Message */}
                       {item.text? 
-                      (<Text style={{ color: isSender ? 'white' : 'black', fontSize: 16 }}>{item.text}</Text>) : null}
+                      (<Text style={{ color: isSender ? 'white' : theme === 'light' ? 'black' : '#f0f0f0', fontSize: 16 }}>{item.text}</Text>) : null}
 
                       {/* Image Message */}
                       {item.imageUrl ? 
@@ -552,7 +563,7 @@ function IndividualChatScreen() {
                       ) : null}
 
                       {/* Time */}
-                      <Text style={{ color: isSender ? '#D0E6FF' : '#555', fontSize: 10, marginTop: 5, textAlign: 'right' }}>{item.sentAt}</Text>
+                      <Text style={{ color: isSender ? (theme === 'light' ? '#D0E6FF' : '#aacfff') : (theme === 'light' ? '#555' : '#aaa'), fontSize: 10, marginTop: 5, textAlign: 'right' }}>{item.sentAt}</Text>
                     </View>
                   </View>
               )}}
@@ -576,13 +587,15 @@ function IndividualChatScreen() {
 
 
         {/* Bottom Text Input */}
-        <View style={{ flexDirection:'row', bottom:0, backgroundColor:'white', paddingVertical:10, paddingHorizontal: 10 }}>
+        <View style={{ flexDirection:'row', bottom:0, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', paddingVertical:10, paddingHorizontal: 10 }}>
 
           {/* Text Input */}
-          <View style={{flex:8, backgroundColor:'white', flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:10, position:'relative'}}>
+          <View style={{flex:8, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', flexDirection:'row', justifyContent:'center', alignItems:'center', paddingHorizontal:10, position:'relative'}}>
             <TextInput
-              placeholder='Type a message'
-              style={{borderWidth:1, borderColor:'black', width:'100%', borderRadius:10, paddingRight:60, height:40}}
+              placeholder={language==='en'?'  Type a message':'  Kirjoita viesti'}
+              placeholderTextColor={theme === 'light' ? 'gray' : '#aaa'}
+              multiline={true}
+              style={{borderWidth:1, borderColor: theme === 'light' ? '#ccc' : '#444', width:'100%',backgroundColor: theme === 'light' ? 'white' : '#2a2a2a',color: theme === 'light' ? 'black' : 'white', borderRadius:10, paddingRight:60, height:40}}
               value={inputMessage}
               onChangeText={setInputMessage}
             />
@@ -603,9 +616,10 @@ function IndividualChatScreen() {
           
 
           {/* Send Button */}
-          <View style={{flex:2, backgroundColor:'white', justifyContent:'center', alignItems:'center'}}>
+          <View style={{flex:2, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', justifyContent:'center', alignItems:'center'}}>
             <TouchableOpacity 
-              style={{borderWidth:1, borderRadius:50, padding:5, backgroundColor:'rgb(16, 197, 16)'}}
+              style={{borderWidth:1, borderRadius:50, padding:5, backgroundColor: theme === 'light' ? '#AAFF00' : '#3a3a3a', borderColor: theme === 'light' ? '#AAFF00' : '#3a3a3a', justifyContent:'center', alignItems:'center'}}
+              disabled={!inputMessage.trim()}
               onPress={handleMessageSend}            
               >
               <FontAwesome name="send" size={24} color="white" />

@@ -4,6 +4,9 @@ import { useRouter } from 'expo-router';
 import { collection, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
+import LanguageContext from "@/context/LanguageContext";
+import { useContext } from "react";
+import ThemeContext from '@/context/ThemeContext';
 
 interface User {
   userid: string;
@@ -14,6 +17,9 @@ interface User {
 }
 
 function SearchScreen() {
+
+  const {language} = useContext(LanguageContext);
+  const {theme} = useContext(ThemeContext);
 
   const currentUser = auth.currentUser?.email;
   console.log('Logged user is:',currentUser)
@@ -69,36 +75,11 @@ function SearchScreen() {
     
   },[searchValue])
 
-  
-
-  /*const usersList = [
-    {
-      userid:1,
-      email:'ryandilthusha@gmail.com',
-      displaName:'Ryan Wick',
-      createdAt: "2025-03-24",
-      profilePic:'https://ntrepidcorp.com/wp-content/uploads/2016/06/team-1.jpg',
-    },
-    {
-      userid:2,
-      email:'shanedinod@gmail.com',
-      displaName:'Shane Dinod',
-      createdAt: "2025-03-25",
-      profilePic:'https://capecoraltech.edu/wp-content/uploads/2016/01/tutor-8-3.jpg',
-    },
-    {
-      userid:3,
-      email:'madurazoyza@gmail.com',
-      displaName:'Madura Zoyza',
-      createdAt: "2025-03-26",
-      profilePic:'https://ntrepidcorp.com/wp-content/uploads/2016/06/team-1.jpg',
-    },
-  ]*/
 
   return (
-    <View>
+    <View style={{flex:1,flexDirection:'column' ,backgroundColor: theme ==='light'?'white':'#121212'}}>
       <HeaderBannerSearch searchValue={searchValue} setSearchValue={setSearchValue} />
-      <Text style={{fontFamily: 'MadimiOne-Regular', color:'gray', marginTop:20, left:15, bottom:5}}>Find a friend</Text>
+      <Text style={{fontFamily: 'MadimiOne-Regular', color:'gray', marginTop:20, left:15, bottom:5}}>{language==='en'?'Search a friend':'Etsi ystävä'}</Text>
 
       <FlatList 
         data={usersList}
@@ -110,15 +91,15 @@ function SearchScreen() {
                 onPress={()=>router.push(`/screens/(tabs)/chats/${item.userid}`)}
               
               >
-                <View style={{flex:2, backgroundColor:'white', justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:2,backgroundColor: theme ==='light'?'#FFFFFF':'#121212', justifyContent:'center', alignItems:'center'}}>
                 <Image
                   source={{ uri: item.profilePic}}
                   style={{width:50, height:50, borderRadius:20}}
                 />
                 </View>
-                <View style={{flex:8, backgroundColor:'white', flexDirection:'column'}}>
-                  <Text style={{fontWeight:'bold', top:2}}>{item.displayName}</Text>
-                  <Text style={{color:'gray', fontSize:12, top:8}}>Added on {item.createdAt}</Text>
+                <View style={{flex:8, backgroundColor: theme ==='light'?'#FFFFFF':'#121212', flexDirection:'column'}}>
+                  <Text style={{fontWeight:'bold', top:2, color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.displayName}</Text>
+                  <Text style={{color:'gray', fontSize:12, top:8}}>{language==='en'?'Added on':'Lisätty'} {item.createdAt}</Text>
                 </View>
               </TouchableOpacity>
             </View>
