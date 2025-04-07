@@ -76,26 +76,45 @@ function SettingsScreen() {
         <View style={{ flex: 1, height: 2, backgroundColor: theme === 'light' ? '#D3D3D3' : '#333', marginHorizontal: 40 }} />
       </View>
 
+      <TouchableOpacity
+        onPress={()=>router.push('/screens/(tabs)/settings/terms')}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 40 }}>
         <Ionicons name="newspaper" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
         <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>{language==='en'?'Terms of Service':'Palveluehdot'}</Text>
       </View>
+      </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={()=>router.push('/screens/(tabs)/settings/privacy')}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+      
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
         <MaterialIcons name="policy" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
         <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>{language==='en'?'Privacy Policy':'Tietosuojakäytäntö'}</Text>
       </View>
+      </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={()=>router.push('/screens/(tabs)/settings/help')}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+      
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
         <Feather name="help-circle" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
         <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>{language==='en'?'Help Center':'Ohjekeskus'}</Text>
       </View>
+      </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={()=>router.push('/screens/(tabs)/settings/about')}
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+      
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginLeft: 50, marginTop: 50 }}>
         <Ionicons name="layers-outline" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
         <Text style={{ marginLeft: 20, marginTop: 5, color: theme === 'light' ? '#000' : '#FFF' }}>{language==='en'?'About':'Noin'}</Text>
       </View>
+      </TouchableOpacity>
 
     </View>
   );
