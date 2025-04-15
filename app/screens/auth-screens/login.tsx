@@ -132,7 +132,7 @@ function LoginScreen() {
     }   
 
 
-    
+
 
     return (
         <ImageBackground 
@@ -184,37 +184,39 @@ function LoginScreen() {
                         <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 50, marginLeft: 0 }}>
                     
                     
-                        <TouchableOpacity 
-                            style= {{marginLeft: 100, marginTop: -15, right: 0, position: 'absolute', justifyContent: 'center', alignItems: 'center'}}
-                            activeOpacity={0.8}
-                            onPress={handleLogin}>
-                            <LinearGradient colors={['#4EF0A1', '#42A1EC']}
-                                style={{ width: 60, height: 60, borderRadius: 35, justifyContent: 'center', alignItems: 'center', elevation: 4}}>
-                                <Feather name="arrow-right" size={40} color="white" />
-                            </LinearGradient>
-                        </TouchableOpacity>
+                            <TouchableOpacity 
+                                style= {{marginLeft: 100, marginTop: -15, right: 0, position: 'absolute', justifyContent: 'center', alignItems: 'center'}}
+                                activeOpacity={0.8}
+                                onPress={handleLogin}>
+                                <LinearGradient colors={['#4EF0A1', '#42A1EC']}
+                                    style={{ width: 60, height: 60, borderRadius: 35, justifyContent: 'center', alignItems: 'center', elevation: 4}}>
+                                    <Feather name="arrow-right" size={40} color="white" />
+                                </LinearGradient>
+                            </TouchableOpacity>                      
 
                         
 
                         </View>
+                        
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: -60, marginLeft: 40, marginRight: 40,}}
+                            onPress={() => signInWithGoogle()}>
+                            <Image source={require('../../../assets/auth-images/Google.png')} 
+                                style={{ width: 20, height: 20, marginRight: 10 }}/>
+                            <Text style={{ fontSize: 16 }}>Continue with Google</Text>
+                        </TouchableOpacity>  
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: -70, marginLeft: 40, marginRight: 40,}}
+                                    onPress={() => signInWithFacebook()}>
+                                    <Image source={require('../../../assets/auth-images/Facebook.png')} 
+                                        style={{ width: 20, height: 20, marginRight: 10 }}/>
+                                    <Text style={{ fontSize: 16 }}>Continue with Facebook</Text>
+                        </TouchableOpacity>    
                                         
                     </View>
                     
                     
                     
                 </View>
-                <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: 60, marginLeft: 40, marginRight: 40}}
-                            onPress={() => signInWithGoogle()}>
-                            <Image source={require('../../../assets/auth-images/Google.png')} 
-                                style={{ width: 20, height: 20, marginRight: 10 }}/>
-                            <Text style={{ fontSize: 16 }}>Continue with Google</Text>
-                </TouchableOpacity>  
-                <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: 50, marginLeft: 40, marginRight: 40}}
-                            onPress={() => signInWithFacebook()}>
-                            <Image source={require('../../../assets/auth-images/Facebook.png')} 
-                                style={{ width: 20, height: 20, marginRight: 10 }}/>
-                            <Text style={{ fontSize: 16 }}>Continue with Facebook</Text>
-                </TouchableOpacity>      
+                 
 
             </View>
         </ImageBackground>

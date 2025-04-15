@@ -8,15 +8,15 @@ import { useRouter } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { auth, db, storage } from '@/firebase/firebaseConfig';
 import { useEffect, useState, useCallback, useContext } from 'react';
-import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import ThemeContext from '@/context/ThemeContext';
 import LanguageContext from "@/context/LanguageContext";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 interface User{
   lastSeen: string,
@@ -208,6 +208,124 @@ function ProfileScreen() {
   }
 
 
+  /* ****** Upon click delete account, delete the account ****** */
+  const handleDeleteAccount = async () => {
+  try {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log("No user is currently signed in.");
+      return;
+    }
+
+    const userId = user.uid;
+
+    
+
+    // 1. Delete chats where the user is userA or userB
+    try {
+      const chatAQuery = query(collection(db, "chats"), where("userA", "==", currentUser));
+      const chatASnap = await getDocs(chatAQuery);
+    
+      chatASnap.docs.map(async (docSnap) => {
+        await deleteDoc(doc(db, "chats", docSnap.id));
+      });
+    
+      const chatBQuery = query(collection(db, "chats"), where("userB", "==", currentUser));
+      const chatBSnap = await getDocs(chatBQuery);
+    
+      chatBSnap.docs.map(async (docSnap) => {
+        await deleteDoc(doc(db, "chats", docSnap.id));
+      });
+    
+      console.log("All related chats deleted.");
+    } catch (error) {
+      console.log("Error deleting chats:", error);
+    }
+    
+
+    // 2. Delete messages where user is sender
+    try {
+      const messageQuery = query(collection(db, "messages"), where("senderId", "==", currentUser));
+      const messageSnap = await getDocs(messageQuery);
+    
+      messageSnap.docs.map(async (docSnap) => {
+        await deleteDoc(doc(db, "messages", docSnap.id));
+      });
+    
+      console.log("All messages sent by user deleted.");
+    } catch (error) {
+      console.log("Error deleting messages:", error);
+    }
+    
+
+    // 3. Delete calls where user is caller or receiver
+    try {
+      const callCallerQuery = query(collection(db, "calls"), where("callerId", "==", currentUser));
+      const callCallerSnap = await getDocs(callCallerQuery);
+    
+      callCallerSnap.docs.map(async (docSnap) => {
+        await deleteDoc(doc(db, "calls", docSnap.id));
+      });
+    
+      const callReceiverQuery = query(collection(db, "calls"), where("receiverId", "==", currentUser));
+      const callReceiverSnap = await getDocs(callReceiverQuery);
+    
+      callReceiverSnap.docs.map(async (docSnap) => {
+        await deleteDoc(doc(db, "calls", docSnap.id));
+      });
+    
+      console.log("All related call records deleted.");
+    } catch (error) {
+      console.log("Error deleting calls:", error);
+    }
+    
+
+    // 4. Delete profile pic from Firebase Storage
+    const picRef = ref(storage, `profilePics/${userId}.jpg`);
+    await deleteObject(picRef).catch((err) => {
+      console.log("⚠️ No profile pic to delete or error occurred:", err.message);
+    });
+
+    // 5. Delete user document from Firestore
+    await deleteDoc(doc(db, "users", userId));
+
+    // 6. Delete from Firebase Auth
+    await user.delete();
+
+
+
+    // 7. Google Sign out (if used)
+    await GoogleSignin.signOut().catch(() => {});
+
+    // 8. Redirect to login
+    router.push("/screens/auth-screens/login");
+
+    Toast.show({
+      type: "success",
+      text1: "Account deleted successfully",
+    });
+
+  } catch (error: any) {
+    console.error("❌ Failed to delete account:", error.message);
+
+    // If user.delete() fails due to recent sign-in requirement
+    if (error.code === "auth/requires-recent-login") {
+      Toast.show({
+        type: "error",
+        text1: "Please log in again to delete your account.",
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Error deleting account",
+        text2: error.message,
+      });
+    }
+  }
+};
+
+
   return (
     <View style={{flex:1}}>
       {/* Header Part */}
@@ -235,8 +353,18 @@ function ProfileScreen() {
                   </TouchableOpacity>
                 </View> 
               </View>
-              {/* Name Text */}
-              <Text style={{ marginTop: 20, fontSize: 22, fontWeight: 'bold', color: theme === 'light' ? '#000' : '#FFF' }}>{profileData?.displayName}</Text>
+              
+              <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', gap:10}}>
+                {/* Name Text */}
+                <Text style={{ marginTop: 20, fontSize: 22, fontWeight: 'bold', color: theme === 'light' ? '#000' : '#FFF' }}>{profileData?.displayName}</Text>
+                {/* Delete button */}
+                <TouchableOpacity 
+                  style={{backgroundColor: theme === 'light' ? '#FFCDD2' : '#EF5350', borderRadius:100, padding:5, borderWidth: 2, borderColor: theme === 'light' ? '#fff' : '#1e1e1e',top:10}}
+                  onPress={handleDeleteAccount}
+                >
+                  <FontAwesome name="trash-o" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
 

@@ -52,7 +52,7 @@ function RegisterScreen() {
             id: user.uid,
             email: email,
             displayName: displayName,
-            profilePic: '', // default empty, user can upload later
+            profilePic: 'https://firebasestorage.googleapis.com/v0/b/smart-chat-c4743.firebasestorage.app/o/profilePics%2Fdefault-profile.png?alt=media&token=bf83b921-2f87-434c-a1b6-6f0382082459', // default empty, user can upload later
             status: "Hey I'm using Smart Chat",
             createdAt: new Date(),
             lastSeen: new Date(),

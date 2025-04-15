@@ -1,10 +1,10 @@
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import HeaderBanner from '@/components/HeaderBanner';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { auth, db } from '@/firebase/firebaseConfig';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { collection, getDoc, getDocs, query, where, doc, onSnapshot } from 'firebase/firestore';
+import { collection, getDoc, getDocs, query, where, doc, onSnapshot, deleteDoc } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 import ThemeContext from '@/context/ThemeContext';
 
@@ -95,6 +95,8 @@ function ChatsScreen() {
 
                     // Combine both chat lists
                     const allChats = [...chatList1, ...chatList2];
+                    // 🔁 Sort chats by latest message time (descending)
+                    allChats.sort((a, b) => b.lastMessageTime.getTime() - a.lastMessageTime.getTime());
                     setChatList(allChats);
                     console.log("Chats List: ", allChats);                
                 }
@@ -143,7 +145,95 @@ function ChatsScreen() {
       
         return () => unsubscribe();
       }, [currentUserId]);
-      
+    
+
+    /* ****** TO DELETE A CHAT ****** */
+    const handleDeleteChat = async (otherUserId: string) => {
+        Alert.alert(
+            "Delete Chat",
+            "Are you sure you want to delete this chat?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete", style: "destructive", onPress: async () => {
+                        try {
+                            const currentUserId = auth.currentUser?.uid;
+                            if (!currentUserId) return;
+                
+                            const q = query(
+                                collection(db, 'chats'),
+                                where('userA', 'in', [currentUserId, otherUserId]),
+                                where('userB', 'in', [currentUserId, otherUserId])
+                            );
+                            const snapshot = await getDocs(q);
+                
+                            snapshot.forEach(async (element) => {
+                                await deleteDoc(doc(db, 'chats', element.id));
+                            });
+                
+                            console.log("Chat deleted successfully");
+
+                            // Refresh the chat list
+                            const fetchChats = async()=>{
+                                try{
+                                    // Get chats where current user is userA
+                                    const q1 = query(collection(db,"chats"), where("userA", "==", currentUserId))
+                                    const snap1 = await getDocs(q1);
+                
+                                    // Get chats where current user is userB
+                                    const q2 = query(collection(db,"chats"), where("userB", "==", currentUserId))
+                                    const snap2 = await getDocs(q2);
+                
+                                    // snap1 : Map chatList 1 Data -> where user is userA
+                                    const chatList1 = snap1.docs.map((element)=>{
+                                        return{
+                                            userB: element.data().userBdisplayName, 
+                                            userBprofileImageUrl:element.data().userBprofilePic,
+                                            lastMessage: element.data().lastMessage,
+                                            lastMessageTime: element.data().lastMessageTime?.toDate() || new Date(),
+                                            unreadB: element.data().unreadA || 0,
+                                            userBid:element.data().userB
+                                        }
+                                    });
+                
+                                    // snap2 : Map chatList 2 Data -> where user is userB
+                                    const chatList2 = snap2.docs.map((element)=>{
+                                        return{
+                                            userB: element.data().userAdisplayName, 
+                                            userBprofileImageUrl:element.data().userAprofilePic,
+                                            lastMessage: element.data().lastMessage,
+                                            lastMessageTime: element.data().lastMessageTime?.toDate() || new Date(),
+                                            unreadB: element.data().unreadB || 0,
+                                            userBid:element.data().userA
+                                        }
+                                    });
+                
+                                    // Combine both chat lists
+                                    const allChats = [...chatList1, ...chatList2];
+                                    // 🔁 Sort chats by latest message time (descending)
+                                    allChats.sort((a, b) => b.lastMessageTime.getTime() - a.lastMessageTime.getTime());
+                                    setChatList(allChats);
+                                    console.log("Chats List: ", allChats);                
+                                }
+                
+                                catch(error){
+                                    console.log(error)
+                                }
+                            }
+                
+                            fetchChats();
+                        
+
+                        } 
+                        
+                        catch (error) {
+                            console.log("Error deleting chat:", error);
+                        }
+                    }
+                }
+            ],
+        );
+      };
       
 
     return (
@@ -167,7 +257,7 @@ function ChatsScreen() {
                       <TouchableOpacity
                           style={{height:80, paddingBottom:10, paddingTop:10, borderBottomColor:theme ==='light'?'#2C2C2C':'#E0E0E0', borderBottomWidth:1}}
                           onPress={()=>router.push(`/screens/(tabs)/chats/${item.userBid}`)}
-
+                          onLongPress={() => handleDeleteChat(item.userBid)}
                           >
                           <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
                               <View style={{flex:1, flexDirection:'row', marginLeft:10}}>
