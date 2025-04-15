@@ -163,19 +163,6 @@ function RegisterScreen() {
                            </LinearGradient>
                          </TouchableOpacity>
                         </View>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
-                         <View style={{ flex: 1, height: 1, backgroundColor: 'gray', marginHorizontal: 10 }} />
-                         <Text style={{ fontSize: 16, color: 'gray' }}>or</Text>
-                         <View style={{ flex: 1, height: 1, backgroundColor: 'gray', marginHorizontal: 10 }} />
-                        </View>
-
-                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, marginTop: 5, backgroundColor: 'white'}}
-                           onPress={() => console.log('Google Sign In')}>
-                            <Image source={require('../../../assets/auth-images/Google.png')} 
-                             style={{ width: 20, height: 20, marginRight: 10 }}/>
-                            <Text style={{ fontSize: 16 }}>Continue with Google</Text>
-                        </TouchableOpacity>
                 </View>
         </View>
 

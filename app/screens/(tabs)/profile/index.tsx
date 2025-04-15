@@ -15,6 +15,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import Toast from 'react-native-toast-message';
 import ThemeContext from '@/context/ThemeContext';
 import LanguageContext from "@/context/LanguageContext";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 
 interface User{
@@ -94,7 +95,11 @@ function ProfileScreen() {
   /* UPON CLICK LOGOUT BUTTON THE USER IS SIGNNED OUT FROM THE SESSION */
   const handleLogout = async ()=>{
     try{
+      // Sign out from Firebase
       await signOut(auth)
+
+      // Sign out from Google
+      await GoogleSignin.signOut();
       router.navigate('/screens/auth-screens/login')
     }
     catch(error){

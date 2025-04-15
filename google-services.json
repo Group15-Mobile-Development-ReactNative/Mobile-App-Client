@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "896888138808",
+    "project_id": "smart-chat-c4743",
+    "storage_bucket": "smart-chat-c4743.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896888138808:android:ab1518c3f8f76ae53acacd",
+        "android_client_info": {
+          "package_name": "com.ryanwick123.MobileAppClient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896888138808-a9m5u7a5i5iojav8n382p4jneqf3oigf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ryanwick123.MobileAppClient",
+            "certificate_hash": "568f5de5c4ece834169d504fdcc4fc565d7cf131"
+          }
+        },
+        {
+          "client_id": "896888138808-m6cfv9s3sufc2lslmp6la3jaag259beo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ryanwick123.MobileAppClient",
+            "certificate_hash": "5ea906e37ff37567c8544e2cb9e6cbbfd432ef07"
+          }
+        },
+        {
+          "client_id": "896888138808-40chd7cq6cokhjg05ug7s39auqrr61kp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4VFkN05c5I2CdKUGcUtJIBWOOiVNu7qQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896888138808-40chd7cq6cokhjg05ug7s39auqrr61kp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
