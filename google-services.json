@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:896888138808:android:ab1518c3f8f76ae53acacd",
+        "mobilesdk_app_id": "1:896888138808:android:ef312531ba865d853acacd",
         "android_client_info": {
           "package_name": "com.ryanwick123.MobileAppClient"
         }
@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "896888138808-g6debvvbalihr0s5gp5kqhlnc8hmllfl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ryanwick123.MobileAppClient",
+            "certificate_hash": "5ae2afbd0b332725c5897429551479520dcc9bd4"
+          }
+        },
+        {
           "client_id": "896888138808-m6cfv9s3sufc2lslmp6la3jaag259beo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,7 +38,15 @@
           }
         },
         {
-          "client_id": "896888138808-40chd7cq6cokhjg05ug7s39auqrr61kp.apps.googleusercontent.com",
+          "client_id": "896888138808-vqg7cnqsll4oj32evqtbrme04p9dggib.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ryanwick123.MobileAppClient",
+            "certificate_hash": "c1ba2bb3005b2cfa7226f5e00c827e0e4497fbe8"
+          }
+        },
+        {
+          "client_id": "896888138808-1bmpv8uhcvnaqg9d70trouqh4cqh4vdd.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -43,7 +59,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "896888138808-40chd7cq6cokhjg05ug7s39auqrr61kp.apps.googleusercontent.com",
+              "client_id": "896888138808-1bmpv8uhcvnaqg9d70trouqh4cqh4vdd.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

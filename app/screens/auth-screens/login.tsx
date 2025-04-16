@@ -50,39 +50,46 @@ function LoginScreen() {
     // Google Sign In Configuration
     useEffect(() => {
         GoogleSignin.configure({
-          webClientId: '896888138808-40chd7cq6cokhjg05ug7s39auqrr61kp.apps.googleusercontent.com',
+            webClientId: '896888138808-1bmpv8uhcvnaqg9d70trouqh4cqh4vdd.apps.googleusercontent.com',
+            offlineAccess: true, // optional but helps debugging
+            forceCodeForRefreshToken: true, // also optional
         });
-      }, []);
+      }, []);    
+      
+      
 
-    // Google Sign In Function
-    const signInWithGoogle = async () => {
+      const signInWithGoogle = async () => {
         try {
-            console.log("🔄 Checking Google Play Services...");
-            await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-        
-            // ✅ Force account picker to show
-            await GoogleSignin.signOut();
-
-            console.log("🔐 Initiating Google Sign-In...");
-            const userInfo = await GoogleSignin.signIn();
-            console.log("✅ Google User Info:", userInfo);
-        
-            const { idToken } = await GoogleSignin.getTokens();
-            console.log("🔐 Token retrieved:", idToken);
-        
-            const credential = GoogleAuthProvider.credential(idToken);
-            await signInWithCredential(auth, credential);
-        
-            console.log("✅ Firebase login successful");
-
-            // 🔽 Save user to Firestore if not exists
-            const currentUser = auth.currentUser;
-            if (currentUser) {
+          console.log("🔄 Checking Google Play Services...");
+          const hasPlayServices = await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+          console.log("📱 Play Services available:", hasPlayServices);
+      
+          console.log("🧹 Signing out first to force account picker...");
+          await GoogleSignin.signOut();
+      
+          console.log("🔐 Starting Google Sign-In...");
+          const userInfo = await GoogleSignin.signIn();
+          console.log("✅ Google Sign-In Success: ", JSON.stringify(userInfo, null, 2));
+      
+          console.log("🔑 Getting ID token...");
+          const tokens = await GoogleSignin.getTokens();
+          console.log("🪪 Tokens:", tokens);
+      
+          const credential = GoogleAuthProvider.credential(tokens.idToken);
+          console.log("🔧 Firebase credential created:", credential);
+      
+          console.log("🚀 Signing into Firebase...");
+          await signInWithCredential(auth, credential);
+      
+          const currentUser = auth.currentUser;
+          console.log("🧑 Firebase user after signIn:", currentUser);
+      
+          if (currentUser) {
             const userRef = doc(db, 'users', currentUser.uid);
             const userSnap = await getDoc(userRef);
-
+      
             if (!userSnap.exists()) {
-                await setDoc(userRef, {
+              await setDoc(userRef, {
                 id: currentUser.uid,
                 displayName: currentUser.displayName,
                 email: currentUser.email,
@@ -90,21 +97,21 @@ function LoginScreen() {
                 status: "Hey I'm using smart",
                 createdAt: serverTimestamp(),
                 lastSeen: serverTimestamp()
-                });
-                console.log("🆕 User saved to Firestore");
+              });
+              console.log("🆕 User saved to Firestore");
             } else {
-                console.log("👤 User already exists");
+              console.log("👤 User already exists in Firestore");
             }
-            }
-
-            //Route to chats page
-            setTimeout(() => {
-                router.navigate('/screens/(tabs)/chats')
-            }, 1000);          
+          }
+      
+          console.log("✅ Navigation to chats page...");
+          setTimeout(() => {
+            router.navigate('/screens/(tabs)/chats');
+          }, 1000);
       
         } catch (error: any) {
-          console.log("Sign-In failed");
-          console.log("Full Error Object:", error);
+          console.log("❌ Sign-In failed with full error:", JSON.stringify(error, null, 2));
+      
           if (error.code === statusCodes.SIGN_IN_CANCELLED) {
             console.log("User cancelled sign-in");
           } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -112,25 +119,11 @@ function LoginScreen() {
           } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
             console.log("Play services not available");
           } else {
-            console.log("Unexpected error:", error);
+            console.log("📛 Unexpected error:", error.message || error.toString());
           }
         }
       };
-
-
-
-    // Facebook Sign In Function
-    const signInWithFacebook = async () => {
-        try {
-            // Facebook login logic here
-            // You can use a library like react-native-fbsdk-next for Facebook login
-            console.log("Facebook login not implemented yet.");
-        }
-        catch (error) {
-            console.log("Facebook login failed:", error);
-        }
-    }   
-
+      
 
 
 
@@ -204,13 +197,14 @@ function LoginScreen() {
                                 style={{ width: 20, height: 20, marginRight: 10 }}/>
                             <Text style={{ fontSize: 16 }}>Continue with Google</Text>
                         </TouchableOpacity>  
+                        {/* Facebook Sign In Button
                         <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: -70, marginLeft: 40, marginRight: 40,}}
                                     onPress={() => signInWithFacebook()}>
                                     <Image source={require('../../../assets/auth-images/Facebook.png')} 
                                         style={{ width: 20, height: 20, marginRight: 10 }}/>
                                     <Text style={{ fontSize: 16 }}>Continue with Facebook</Text>
                         </TouchableOpacity>    
-                                        
+                        */}      
                     </View>
                     
                     

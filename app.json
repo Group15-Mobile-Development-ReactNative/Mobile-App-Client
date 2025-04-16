@@ -16,12 +16,12 @@
         "ITSAppUsesNonExemptEncryption": false
       }
     },
-    "android": {
-      "googleServicesFile": "./google-services.json",
+    "android": {      
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "com.ryanwick123.MobileAppClient"
     },
     "web": {
