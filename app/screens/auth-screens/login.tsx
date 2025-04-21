@@ -155,9 +155,9 @@ function LoginScreen() {
                         {/* Emial Input */}
                         <Text style={{ fontSize: 20 }}>Email Address</Text>
                         <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                            <MaterialIcons name="email" size={30} color="lightblue" />
+                            <MaterialIcons name="email" size={35} color="lightgreen" />
                             <TextInput 
-                                style={{ borderWidth: 2, height: 40, width: 250, marginLeft: 18, borderRadius: 20, backgroundColor: 'white' }} 
+                                style={{ borderWidth: 2, height: 45, width: 250, marginLeft: 18, borderRadius: 20, backgroundColor: 'white', padding:10 }} 
                                 value={email}
                                 onChangeText={setEmail} 
                                 />
@@ -166,9 +166,9 @@ function LoginScreen() {
                         {/* Password Input */}
                         <Text style={{ fontSize: 20, marginTop: 10 }}>Password</Text>
                         <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                            <FontAwesome6 name="lock" size={30} color="lightblue" />
+                            <FontAwesome6 name="lock" size={35} color="lightgreen" />
                             <TextInput 
-                                style={{ borderWidth: 2, height: 40, width: 250, marginLeft: 20, borderRadius: 20, backgroundColor: 'white' }} secureTextEntry
+                                style={{ borderWidth: 2, height: 45, width: 250, marginLeft: 20, borderRadius: 20, backgroundColor: 'white', padding:10 }} secureTextEntry
                                 value={password}
                                 onChangeText={setPassword} 
                                 />
@@ -191,7 +191,7 @@ function LoginScreen() {
 
                         </View>
                         
-                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: -60, marginLeft: 40, marginRight: 40,}}
+                        <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'black', borderRadius: 25, paddingVertical: 10, paddingHorizontal: 20, backgroundColor: 'white', bottom: -80, marginLeft: 40, marginRight: 40,}}
                             onPress={() => signInWithGoogle()}>
                             <Image source={require('../../../assets/auth-images/Google.png')} 
                                 style={{ width: 20, height: 20, marginRight: 10 }}/>

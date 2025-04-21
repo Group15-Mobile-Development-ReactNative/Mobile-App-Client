@@ -15,7 +15,6 @@ const AboutScreen = () => {
       ]}
     >
       <View style={styles.background}>
-        <Text style={[styles.title, { color: isLight ? '#1a1a1a' : '#f0f0f0' }]}>About App</Text>
 
         <Image
           source={require('../../../../assets/header-images/Smart-Chat-Logo.png')}

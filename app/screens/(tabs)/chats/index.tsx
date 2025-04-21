@@ -243,49 +243,66 @@ function ChatsScreen() {
           <HeaderBanner />
 
           <TouchableOpacity 
-            style={{position:'absolute', right:20, top:25}}
+            style={{position:'absolute', right:20, top:25,}}
             onPress={()=>router.push('/screens/search-screen')}
             >
             <AntDesign name="search1" size={24} color="white" />
           </TouchableOpacity>
           
           {/* Body Part */}
-          <FlatList
-              data={chatsList}
-              renderItem ={ ({item})=>(
-                  <View style={{flex:1,flexDirection:'column' ,backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
-                      <TouchableOpacity
-                          style={{height:80, paddingBottom:10, paddingTop:10, borderBottomColor:theme ==='light'?'#2C2C2C':'#E0E0E0', borderBottomWidth:1}}
-                          onPress={()=>router.push(`/screens/(tabs)/chats/${item.userBid}`)}
-                          onLongPress={() => handleDeleteChat(item.userBid)}
-                          >
-                          <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
-                              <View style={{flex:1, flexDirection:'row', marginLeft:10}}>
-                                  <Image
-                                      source={{ uri: item.userBprofileImageUrl }}
-                                      style={{width:50, height:50, borderRadius:20}}
-                                  />  
-                              </View>
-                              <View style={{flex:7, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212', marginLeft:15}}>
-                                  <Text style={{fontWeight:'bold', color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.userB}</Text>
-                                  <Text style={{fontSize:10, marginTop:10, color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.lastMessage}</Text>
-                              </View>
-                              <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
-                                  <View style={{flex:1, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-end'}}>
-                                      <Text style={{fontSize:10, color:theme ==='light'?'black':'white'}}>{item.lastMessageTime.toString().slice(16,21)}</Text>
-                                  </View>
-                                  
-                                  <View style={item.unreadB!=0?{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', backgroundColor:theme ==='light'?'#25D366':'#25D366', width:15, height:15, borderRadius:5, marginTop:15}: undefined}>
-                                      <Text style={{fontSize:10, color:theme ==='light'?'white':'black'}}>{item.unreadB}</Text>
-                                  </View>                                    
-                              </View>                                     
-                              
-                          </View>
-                      </TouchableOpacity>
-                  </View>
-              )
+          {
+            chatsList.length === 0 ? (
+                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+                    <Image
+                        source={require('../../../../assets/images/no-messages.png')}
+                        style={{width: 280, height: 280, opacity: 0.7}}
+                    />
+                </View>
+            ) 
+            
+            : 
+            
+            <FlatList
+                data={chatsList}
+                keyExtractor={(item, index) => `${item.userBid}_${index}`}
+                renderItem ={ ({item})=>(
+                    <View style={{flex:1,flexDirection:'column' ,backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
+                        <TouchableOpacity
+                            style={{height:80, flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 16, borderBottomColor: theme === 'light' ? '#e0e0e0' : '#2a2a2a', borderBottomWidth:1, backgroundColor: theme === 'light' ? '#fff' : '#121212',}}
+                            onPress={()=>router.push(`/screens/(tabs)/chats/${item.userBid}`)}
+                            onLongPress={() => handleDeleteChat(item.userBid)}
+                            >
+                            <View style={{flex:1, flexDirection:'row', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212'}}>
+                                {/* Profile Image */}
+                                <View style={{flex:1, flexDirection:'row', marginLeft:0, marginRight:10}}>
+                                    <Image
+                                        source={{ uri: item.userBprofileImageUrl }}
+                                        style={{width:50, height:50, borderRadius:20}}
+                                    />  
+                                </View>
+                                {/* User Name and Last Message */}
+                                <View style={{flex:7, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-start', backgroundColor: theme ==='light'?'#FFFFFF':'#121212', marginLeft:15}}>
+                                    <Text style={{fontWeight:'bold', color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.userB}</Text>
+                                    <Text style={{fontSize:10, marginTop:10, color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.lastMessage}</Text>
+                                </View>
+                                {/* Last Message Time and Unread Messages */}
+                                <View style={{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center'}}>
+                                    <View style={{flex:1, flexDirection:'column', justifyContent:'flex-start', alignItems:'flex-end', top:4, left:5}}>
+                                        <Text style={{fontSize:11, color: theme === 'light' ? '#999' : '#ccc',}}>{item.lastMessageTime.toString().slice(16,21)}</Text>
+                                    </View>
+                                    
+                                    <View style={item.unreadB!=0?{flex:1, flexDirection:'column', justifyContent:'center', alignItems:'center', backgroundColor:theme ==='light'?'#25D366':'#25D366', width:20, height:15, borderRadius:10, marginTop:10, marginBottom:5, bottom:2, left:5}: undefined}>
+                                        <Text style={{fontSize:10, color:theme ==='light'?'white':'black'}}>{item.unreadB}</Text>
+                                    </View>                                    
+                                </View>                                     
+                                
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    )}
+            />   
           }
-          />            
+                   
 
         </View>
     );

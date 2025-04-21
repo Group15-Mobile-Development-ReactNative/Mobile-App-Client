@@ -102,35 +102,35 @@ function RegisterScreen() {
                 </View>
 
                 <View style={{ flex: 0.6, flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                    <View style={{marginLeft: 40, marginTop: -15 }}>
+                    <View style={{marginLeft: 40, marginTop: 15 }}>
                         {/* Set Display Name */}
-                        <Text style={{ fontSize: 16 }}>Display Name</Text>
+                        <Text style={{ fontSize: 18 }}>Display Name</Text>
                         <View style={{ flexDirection: 'row', marginTop: 6, alignItems: 'center' }}>
-                        <MaterialIcons name="email" size={22} color="lightblue" />
+                        <MaterialIcons name="email" size={30} color="lightgreen" />
                         <TextInput 
-                            style={{ borderWidth: 1.5, height: 32, width: 260, marginLeft: 12, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }} 
+                            style={{ borderWidth: 1.5, height: 40, width: 280, marginLeft: 12, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }} 
                             value={displayName}
                             onChangeText={setDisplayName}
                         />
                         </View>
 
                         {/* Email */}
-                        <Text style={{ fontSize: 16, marginTop: 12 }}>Email Address</Text>
+                        <Text style={{ fontSize: 18, marginTop: 12 }}>Email Address</Text>
                         <View style={{ flexDirection: 'row', marginTop: 6, alignItems: 'center' }}>
-                        <MaterialIcons name="email" size={22} color="lightblue" />
+                        <MaterialIcons name="email" size={30} color="lightgreen" />
                         <TextInput 
-                            style={{ borderWidth: 1.5, height: 32, width: 260, marginLeft: 12, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }}
+                            style={{ borderWidth: 1.5, height: 40, width: 280, marginLeft: 12, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }}
                             value={email}
                             onChangeText={setEmail} 
                         />
                         </View>
 
                         {/* Password */}
-                        <Text style={{ fontSize: 16, marginTop: 12 }}>Password</Text>
+                        <Text style={{ fontSize: 18, marginTop: 12 }}>Password</Text>
                         <View style={{ flexDirection: 'row', marginTop: 6, alignItems: 'center' }}>
-                        <FontAwesome6 name="lock" size={22} color="lightblue" />
+                        <FontAwesome6 name="lock" size={30} color="lightgreen" />
                         <TextInput 
-                            style={{ borderWidth: 1.5, height: 32, width: 260, marginLeft: 14, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }} 
+                            style={{ borderWidth: 1.5, height: 40, width: 280, marginLeft: 14, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }} 
                             secureTextEntry
                             value={password}
                             onChangeText={setPassword}
@@ -138,11 +138,11 @@ function RegisterScreen() {
                         </View>
 
                         {/* Repeat Password */}
-                        <Text style={{ fontSize: 16, marginTop: 12 }}>Repeat Password</Text>
+                        <Text style={{ fontSize: 18, marginTop: 12 }}>Repeat Password</Text>
                         <View style={{ flexDirection: 'row', marginTop: 6, alignItems: 'center' }}>
-                        <FontAwesome6 name="lock" size={22} color="lightblue" />
+                        <FontAwesome6 name="lock" size={30} color="lightgreen" />
                         <TextInput 
-                            style={{ borderWidth: 1.5, height: 32, width: 260, marginLeft: 14, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }} 
+                            style={{ borderWidth: 1.5, height: 40, width: 280, marginLeft: 14, borderRadius: 15, backgroundColor: 'white', paddingHorizontal: 10 }} 
                             secureTextEntry 
                             value={repeatPassword}
                             onChangeText={handleCheckPasswordWithRepaetPassword}
@@ -151,7 +151,7 @@ function RegisterScreen() {
 
                     <Text style={repeatPasswordError == 'Password does not match' ? { color: 'red' } : { color: 'green' }}>{repeatPasswordError}</Text>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 30, marginLeft: 0 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginTop: 50, marginLeft: 0 }}>
                     
                           <TouchableOpacity 
                             style= {{marginLeft: 260, marginTop: -35}}

@@ -708,11 +708,11 @@ function IndividualChatScreen() {
           {/* Send Button */}
           <View style={{flex:2, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', justifyContent:'center', alignItems:'center'}}>
             <TouchableOpacity 
-              style={{borderWidth:1, borderRadius:50, padding:5, backgroundColor: theme === 'light' ? '#AAFF00' : '#3a3a3a', borderColor: theme === 'light' ? '#AAFF00' : '#3a3a3a', justifyContent:'center', alignItems:'center'}}
+              style={{borderWidth:1, borderRadius:50, padding:10, backgroundColor: theme === 'light' ? '#50C878' : '#3a3a3a', borderColor: theme === 'light' ? '#AAFF00' : '#3a3a3a', justifyContent:'center', alignItems:'center'}}
               disabled={!inputMessage.trim()}
               onPress={handleMessageSend}            
               >
-              <FontAwesome name="send" size={24} color="white" />
+              <FontAwesome name="send" size={20} color="white" />
             </TouchableOpacity>          
           </View>
           

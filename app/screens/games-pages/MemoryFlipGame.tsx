@@ -17,11 +17,11 @@ const MemoryFlipGame = () => {
   const isLight = theme === 'light';
 
   const [cards, setCards] = useState(generateCards());
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState<number[]>([]);
   const [matches, setMatches] = useState(0);
   const [showWin, setShowWin] = useState(false);
 
-  const handleFlip = (index) => {
+  const handleFlip = (index:any) => {
     const newCards = [...cards];
     const selectedCard = newCards[index];
 

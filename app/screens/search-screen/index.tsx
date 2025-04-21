@@ -45,7 +45,11 @@ function SearchScreen() {
             userid : element.id,
             email: element.data().email,
             displayName: element.data().displayName,
-            createdAt:element.data().createdAt?.toDate().toLocaleString(),
+            createdAt: element.data().createdAt?.toDate().toLocaleDateString(undefined, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            }),
             profilePic: element.data().profilePic
           }          
         })
@@ -79,27 +83,27 @@ function SearchScreen() {
   return (
     <View style={{flex:1,flexDirection:'column' ,backgroundColor: theme ==='light'?'white':'#121212'}}>
       <HeaderBannerSearch searchValue={searchValue} setSearchValue={setSearchValue} />
-      <Text style={{fontFamily: 'MadimiOne-Regular', color:'gray', marginTop:20, left:15, bottom:5}}>{language==='en'?'Search a friend':'Etsi ystävä'}</Text>
+      <Text style={{fontFamily: 'MadimiOne-Regular', color: theme === 'light' ? '#6e6e6e' : '#aaa', marginTop:20, marginBottom: 8, left:15, bottom:5}}>{language==='en'?'Search a friend':'Etsi ystävä'}</Text>
 
       <FlatList 
         data={usersList}
         renderItem={({item})=>(
           <View>
-            <View style={{flexDirection:'row', marginVertical:5}}>
+            <View style={{flexDirection:'row', marginVertical:5,}}>
               <TouchableOpacity 
-                style={{flex:1, flexDirection:'row'}}
+                style={{flex:1, flexDirection:'row', paddingVertical: 5}}
                 onPress={()=>router.push(`/screens/(tabs)/chats/${item.userid}`)}
               
               >
                 <View style={{flex:2,backgroundColor: theme ==='light'?'#FFFFFF':'#121212', justifyContent:'center', alignItems:'center'}}>
                 <Image
                   source={{ uri: item.profilePic}}
-                  style={{width:50, height:50, borderRadius:20}}
+                  style={{width:50, height:50, borderRadius:25}}
                 />
                 </View>
-                <View style={{flex:8, backgroundColor: theme ==='light'?'#FFFFFF':'#121212', flexDirection:'column'}}>
+                <View style={{flex:8, backgroundColor: theme ==='light'?'#FFFFFF':'#121212', flexDirection:'column',}}>
                   <Text style={{fontWeight:'bold', top:2, color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{item.displayName}</Text>
-                  <Text style={{color:'gray', fontSize:12, top:8}}>{language==='en'?'Added on':'Lisätty'} {item.createdAt}</Text>
+                  <Text style={{color: theme === 'light' ? '#6e6e6e' : '#aaa', fontSize:12, top:8}}>{language==='en'?'Added on':'Lisätty'} {item.createdAt}</Text>
                 </View>
               </TouchableOpacity>
             </View>

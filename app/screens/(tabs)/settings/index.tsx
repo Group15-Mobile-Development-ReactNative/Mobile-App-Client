@@ -58,7 +58,8 @@ function SettingsScreen() {
       </View>
       <Ionicons name="chevron-forward" size={20} color="#999" />
     </TouchableOpacity>
-
+      
+      {/* Notification Row
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginHorizontal: 40, marginTop: 60 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Ionicons name="notifications" size={24} color={theme === 'light' ? '#3A888D' : '#75E6DA'} />
@@ -70,7 +71,7 @@ function SettingsScreen() {
           thumbColor={notificationsEnabled ? "#3A888D" : "#f4f3f4"}
           trackColor={{ false: "#767577", true: "#81b0ff" }}
         />
-      </View>
+      </View> */}
 
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 40 }}>
         <View style={{ flex: 1, height: 2, backgroundColor: theme === 'light' ? '#D3D3D3' : '#333', marginHorizontal: 40 }} />

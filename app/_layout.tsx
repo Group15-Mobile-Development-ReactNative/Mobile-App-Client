@@ -16,6 +16,8 @@ export default function RootLayout() {
   console.log('Language is in root: ', language)
 
   const router = useRouter();
+
+  // Check if user is logged in and redirect to login screen if not
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -26,6 +28,8 @@ export default function RootLayout() {
 
     return () => unsubscribe(); // cleanup
   }, []);
+
+  
   return (
 
     <ThemeContext.Provider value={{theme,setTheme}}>
@@ -42,7 +46,8 @@ export default function RootLayout() {
               headerShown: false,
             }}
           />          
-          <Stack.Screen name="screens/call/AudioCallScreen" options={{headerShown:false}} />
+          <Stack.Screen name="screens/call/AudioCallScreen" options={{headerShown:false}} />          
+          <Stack.Screen name="screens/games-pages" options={{ headerShown: false }} />
         </Stack>
         <Toast />
       </LanguageContext.Provider>

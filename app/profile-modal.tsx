@@ -193,9 +193,9 @@ export default function Modal() {
           
               
 
-          <View style={{flex:8, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', justifyContent:'center', alignItems:'flex-start', width:'90%', marginBottom:40, marginTop: 10 }}>
+          <View style={{flex:8, backgroundColor: theme === 'light' ? 'white' : '#1e1e1e', justifyContent:'center', alignItems:'flex-start', width:'90%', marginBottom:25, marginTop: 10 }}>
             
-            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc'}}>{language==='en'?'Display Name':'Näyttönimi'}</Text>
+            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc', marginBottom:5}}>{language==='en'?'Display Name':'Näyttönimi'}</Text>
             <TextInput 
               style={{borderWidth:1, borderColor: theme === 'light' ? 'gray' : '#666', width:'100%', height:50, borderRadius:8, marginBottom:15, backgroundColor: theme === 'light' ? 'white' : '#2a2a2a', color: theme === 'light' ? 'black' : 'white', paddingHorizontal: 10}}
               placeholder=''
@@ -204,7 +204,7 @@ export default function Modal() {
               
             />
 
-            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc'}}>{language==='en'?'Email':'Sähköposti'}</Text>
+            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc', marginBottom:5}}>{language==='en'?'Email':'Sähköposti'}</Text>
             <TextInput 
               style={{borderWidth:1, borderColor: theme === 'light' ? 'gray' : '#666', width:'100%', height:50, borderRadius:8, marginBottom:15, backgroundColor: theme === 'light' ? 'white' : '#2a2a2a', color: theme === 'light' ? 'black' : 'white', paddingHorizontal: 10}}
               placeholder=''
@@ -212,7 +212,7 @@ export default function Modal() {
               onChangeText={setUserEmail}
             />
 
-            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc'}}>{language==='en'?'Status':'Status'}</Text>
+            <Text style={{color: theme === 'light' ? 'gray' : '#cccccc', marginBottom:5}}>{language==='en'?'Status':'Status'}</Text>
             <TextInput 
               style={{borderWidth:1, borderColor: theme === 'light' ? 'gray' : '#666', width:'100%', height:50, borderRadius:8, marginBottom:0, backgroundColor: theme === 'light' ? 'white' : '#2a2a2a', color: theme === 'light' ? 'black' : 'white', paddingHorizontal: 10}}
               placeholder=''

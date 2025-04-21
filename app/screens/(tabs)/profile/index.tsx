@@ -1,5 +1,5 @@
 import HeaderBanner from '@/components/HeaderBanner';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
@@ -17,6 +17,7 @@ import ThemeContext from '@/context/ThemeContext';
 import LanguageContext from "@/context/LanguageContext";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 interface User{
   lastSeen: string,
@@ -359,8 +360,27 @@ function ProfileScreen() {
                 <Text style={{ marginTop: 20, fontSize: 22, fontWeight: 'bold', color: theme === 'light' ? '#000' : '#FFF' }}>{profileData?.displayName}</Text>
                 {/* Delete button */}
                 <TouchableOpacity 
-                  style={{backgroundColor: theme === 'light' ? '#FFCDD2' : '#EF5350', borderRadius:100, padding:5, borderWidth: 2, borderColor: theme === 'light' ? '#fff' : '#1e1e1e',top:10}}
-                  onPress={handleDeleteAccount}
+                  style={{backgroundColor: theme === 'light' ? '#FFCDD2' : '#EF5350', borderRadius:100, padding:5, borderWidth: 2, borderColor: theme === 'light' ? '#fff' : '#1e1e1e',top:10, width:40, justifyContent:'center', alignItems:'center'}}
+                  onPress={() => {
+                    Alert.alert(
+                      language === 'en' ? 'Delete Account' : 'Poista tili',
+                      language === 'en'
+                        ? 'Are you sure you want to delete your account? This action cannot be undone.'
+                        : 'Haluatko varmasti poistaa tilisi? Tätä toimintoa ei voi peruuttaa.',
+                      [
+                        {
+                          text: language === 'en' ? 'Cancel' : 'Peruuta',
+                          style: 'cancel',
+                        },
+                        {
+                          text: language === 'en' ? 'Delete' : 'Poista',
+                          style: 'destructive',
+                          onPress: handleDeleteAccount,
+                        },
+                      ],
+                      { cancelable: true }
+                    );
+                  }}
                 >
                   <FontAwesome name="trash-o" size={24} color="black" />
                 </TouchableOpacity>
@@ -383,14 +403,14 @@ function ProfileScreen() {
               <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2}}>
                 <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>{language==='en'?'Email':'Sähköposti'}</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
-                    <FontAwesome5 name="user-circle" size={24} color="gray" />
+                  <FontAwesome5 name="envelope" size={24} color="gray" />
                     <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.email}</Text>
                   </View>
                 </View>
               <View style={{flex:1, borderBottomColor: theme === 'light' ? '#E0E0E0' : '#333333', borderBottomWidth:2}}>
                 <Text style={{marginTop:10, color: theme === 'light' ? '#5C5C5C' : '#AAAAAA'}}>{language==='en'?'Status':'Status'}</Text>
                   <View style={{flex:1, flexDirection:'row', gap:15, justifyContent:'flex-start', alignItems:'center'}}>
-                    <FontAwesome5 name="user-circle" size={24} color="gray" />
+                  <FontAwesome5 name="info-circle" size={24} color="gray" />
                     <Text style={{color: theme === 'light' ? '#1C1C1E' : '#F2F2F2'}}>{profileData?.status}</Text>
                   </View>
                 </View>

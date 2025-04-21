@@ -32,7 +32,7 @@ export default function HeaderBannerSearch({ searchValue, setSearchValue }: Head
       </View>
       <TextInput
         placeholder={language==='en'?'Search':'Haku'}
-        style={{position:'absolute', width:'75%', height:40, borderWidth:1, borderColor:'white', top:25, left:80, backgroundColor:'white', borderRadius:20}}
+        style={{position:'absolute', width:'75%', height:40, borderWidth:1, borderColor:'white', top:25, left:80, backgroundColor:'white', borderRadius:20, padding:10}}
         value={searchValue}
         onChangeText={setSearchValue}
       />
