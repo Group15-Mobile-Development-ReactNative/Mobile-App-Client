@@ -314,23 +314,73 @@ This app leverages modern React Native tools along with Firebase and third-party
 
 ## 🔥 Firebase Setup and Configuration
 
-The app uses Firebase extensively for backend services:
-
-### 🧾 Firestore Collections:
-- **users**: Stores user data such as `displayName`, `email`, `profilePic`, `pushToken`, and `status`
-- **chats**: Each document stores a chat between two users with fields like `lastMessage`, `unreadA`, `unreadB`, `userA`, `userB`, etc.
-- **messages**: Sub-collections under a `chatId` for all exchanged messages (text, imageUrl, timestamps)
-- **calls**: Stores current/ongoing or past voice call logs with `callerId`, `receiverId`, `token`, `channelName`, etc.
-
-### 📷 Firebase Storage Folders:
-- `chatImages/`: Stores shared media inside chats
-- `profilePics/`: Stores user profile pictures
-
-### 🔐 Authentication:
-- Sign-in options: Email/Password and Google Sign-In (via Firebase Auth providers)
-- All registered users are automatically saved to Firestore in the `users` collection
+The **Smart Chat** app relies heavily on Firebase for its backend services, providing real-time messaging, user authentication, media storage, and voice call signaling. Below is an overview of how Firebase is integrated into the project.
 
 ---
+
+### 📚 Firestore Database
+
+#### 🔹 `users` Collection
+Each document represents a single user and includes the following fields:
+- `id`: UID from Firebase Auth
+- `displayName`, `email`, `status`
+- `profilePic`: Firebase Storage image URL
+- `pushToken`: For notifications
+- `createdAt`, `lastSeen`: Timestamps
+
+#### 🔹 `chats` Collection
+Each document represents a chat thread between two users:
+- `userA` / `userB`: IDs of both users
+- `userAdisplayName`, `userAprofilePic`, etc.
+- `lastMessage`, `lastMessageTime`
+- `unreadA`, `unreadB`: Count of unread messages per user
+- `createdAt`: Timestamp of chat creation
+
+#### 🔹 `messages` Subcollection
+Inside each `chatId`, the messages are stored as subcollection `messages`:
+- `senderId`, `text`, `sentAt`
+- Optional: `imageUrl`, `fileUrl`
+
+#### 🔹 `calls` Collection
+Handles signaling for Agora calls:
+- `callerId`, `receiverId`
+- `callerName`, `receiverName`
+- `callerPic`, `receiverPic`
+- `channelName`, `token`
+- `isActive`: Tracks call status
+- `createdAt`: Call initiation time
+
+---
+
+### 🗃️ Firebase Storage
+Used to host media files:
+- `profilePics/`: Stores user profile images
+- `chatImages/`: Stores sent media in chat messages
+
+These URLs are saved into Firestore when uploaded.
+
+---
+
+### 🔐 Firebase Authentication
+
+Supports two sign-in methods:
+- **Email & Password** (register & login)
+- **Google Sign-In** via `@react-native-google-signin/google-signin`
+
+On first sign-up, each user is saved in Firestore's `users` collection.
+
+---
+
+### 🔧 Firebase Configuration Files in App
+
+- **`firebase/firebaseConfig.tsx`**: Initializes and exports Firebase app, auth, db, and storage
+- **`google-services.json`**: Required for Android build
+- Firebase Web SDK keys are also used in `app.json` for Expo builds
+
+---
+
+> [!Tip]
+> Always make sure your Firestore Security Rules are set up properly before deploying to production.
 
 ## 📂 Folder Structure
 
