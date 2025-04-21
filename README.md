@@ -377,10 +377,10 @@ On first sign-up, each user is saved in Firestore's `users` collection.
 - **`google-services.json`**: Required for Android build
 - Firebase Web SDK keys are also used in `app.json` for Expo builds
 
----
-
 > [!Tip]
 > Always make sure your Firestore Security Rules are set up properly before deploying to production.
+
+---
 
 ## 📂 Folder Structure
 
