@@ -41,7 +41,7 @@ Install via Expo:
 
 Or scan the QR code:
 
-![Install QR](./assets/qr-install.png)
+<img src='./screenshots/QR.png' width='300'/>
 
 Clone and run locally:
 
@@ -104,7 +104,7 @@ Once these values are set, the app can initiate and receive audio calls. On the 
 
 Below is a screen recording demonstrating how to set up Agora and use it in the app:
 
-![Call Setup Demo](./screenshots/agora-call-setup.gif)
+<img src='./screenshots/agora.gif' width='300'/>
 
 ---
 
@@ -182,7 +182,7 @@ The home screen that displays all existing chat conversations with other users. 
 </details>
 
 ### Preview:
-<img src='./screenshots/placeholder.jpg' width='300'/>
+<img src='./screenshots/chats.gif' width='300'/>
 
 ---
 
@@ -204,7 +204,7 @@ This is the chat thread between two users. Supports real-time messaging with tex
 </details>
 
 ### Preview:
-<img src='./screenshots/placeholder.jpg' width='300'/>
+<img src='./screenshots/chat.gif' width='300'/>
 
 ---
 
@@ -224,7 +224,7 @@ Displays all registered users. Allows selecting a user to start a conversation, 
 </details>
 
 ### Preview:
-<img src='./screenshots/placeholder.jpg' width='300'/>
+<img src='./screenshots/search.gif' width='300'/>
 
 ---
 
@@ -245,7 +245,7 @@ Users can view and manage their profile, update photo, display name, email, and 
 </details>
 
 ### Preview:
-<img src='./screenshots/placeholder.jpg' width='300'/>
+<img src='./screenshots/profile.gif' width='300'/>
 
 ---
 
@@ -267,7 +267,7 @@ Access app extras like Stats and Games. Offers lightweight, fun features for use
 </details>
 
 ### Preview:
-<img src='./screenshots/placeholder.jpg' width='300'/>
+<img src='./screenshots/more.gif' width='300'/>
 
 ---
 
@@ -289,7 +289,7 @@ Manage app preferences like dark mode, language, and legal pages (ToS, Privacy).
 </details>
 
 ### Preview:
-<img src='./screenshots/placeholder.jpg' width='300'/>
+<img src='./screenshots/settings.gif' width='300'/>
 
 ---
 
