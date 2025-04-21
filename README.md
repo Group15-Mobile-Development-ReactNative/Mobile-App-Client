@@ -104,7 +104,7 @@ Once these values are set, the app can initiate and receive audio calls. On the 
 
 Below is a screen recording demonstrating how to set up Agora and use it in the app:
 
-<img src='./screenshots/agora.gif' width='600'/>
+<img src='./screenshots/agora.gif' width='1000'/>
 
 ---
 
