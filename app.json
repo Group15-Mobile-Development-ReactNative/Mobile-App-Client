@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Mobile-App-Client",
+    "name": "Smart Chat",
     "slug": "Mobile-App-Client",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,7 @@
     },
     "android": {      
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
