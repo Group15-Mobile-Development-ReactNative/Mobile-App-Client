@@ -41,7 +41,70 @@ Install via Expo:
 
 Or scan the QR code:
 
-<img src='./screenshots/placeholder.jpg' width='300'/>
+![Install QR](./assets/qr-install.png)
+
+Clone and run locally:
+
+```bash
+git clone https://github.com/Group15-Mobile-Development-ReactNative/Mobile-App-Client.git
+cd Mobile-App-Client
+npm install
+npx expo start
+```
+
+---
+
+## 📞 Call Setup (Agora)
+
+> [!Important]
+> This section guides you through setting up audio call functionality using the Agora SDK.
+
+### 🔑 Step 1: Create an Agora Project
+
+1. Go to [Agora Console](https://sso2.agora.io/)
+2. Sign in or create a new account
+3. Click **"Create New Project"**
+4. Enter a project name like `SmartChat`
+5. **Enable Primary Certificate** under Authentication Method
+6. After creating the project, copy the **App ID**
+
+### 🔐 Step 2: Generate Temporary Token (for testing)
+
+1. Inside the Agora project page, go to **"Project Management"**
+2. Click on your created project (e.g. `SmartChat`)
+3. Scroll down to **"Generate Temp Token"** section
+4. Set Channel Name to `ChatAppCall`
+5. Select **Audio Call**
+6. Click **"Generate Temp Token"**
+
+### 🧩 Step 3: Update Configuration File
+
+Open the file:
+
+```
+/constants/agoraConfig.ts
+```
+
+Replace the placeholders with your own credentials:
+
+```ts
+export const AGORA_APP_ID = "<Your App ID here>";
+export const AGORA_TEMP_TOKEN = "<Your Temporary Token here>"; // Only for development
+export const CHANNEL_NAME = "ChatAppCall";
+```
+
+### 🎯 Step 4: Use in the App
+
+Once these values are set, the app can initiate and receive audio calls. On the **Individual Chat Page**, pressing the call icon triggers Agora and opens the call interface.
+
+> [!Warning]
+> Temp tokens are short-lived and should only be used for development. For production, implement a secure token server.
+
+### 📹 Demo Preview
+
+Below is a screen recording demonstrating how to set up Agora and use it in the app:
+
+![Call Setup Demo](./screenshots/agora-call-setup.gif)
 
 ---
 
