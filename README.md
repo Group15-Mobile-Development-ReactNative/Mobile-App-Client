@@ -195,7 +195,7 @@ This is the chat thread between two users. Supports real-time messaging with tex
 <details>
 <summary>Click to expand</summary>
 
-- **Screen File:** `app/screens/chats-screen/index.tsx`
+- **Screen File:** `app/screens/(tabs)/chats/[id].tsx`
 - Uses Firestore to load/send messages
 - Long-press enables message deletion via modal
 - Includes Agora voice calling (video reserved for future)
@@ -300,13 +300,11 @@ This app leverages modern React Native tools along with Firebase and third-party
 - **React Native**: Core mobile framework
 - **Expo Router**: File-based routing system for easier navigation
 - **Firebase Authentication**: User authentication (Email/Google sign-in)
-- **Cloud Firestore**: Real-time NoSQL database for storing users, messages, chats, and calls
 - **Firebase Storage**: To store and fetch user profile pictures and images shared in chats
 - **Agora SDK**: For real-time audio calling between users
 - **react-native-chart-kit**: Used to render charts for the Stats page (e.g., Top 5 chats)
 - **expo-image-picker**: Allows users to choose profile pictures or send images in chat
 - **expo-camera**: Provides camera access for instant photo sharing in chat
-- **expo-secure-store**: Used for storing login credentials securely ("Remember Me")
 - **react-native-svg**: Required by the charting library for rendering vector graphics
 - **Custom Contexts**: Language and Theme management through `LanguageContext` and `ThemeContext`
 
@@ -442,9 +440,8 @@ This project is licensed under the MIT License.
 
 ## 👥 Author
 
-Built by **Group 15**:
+Built for **University Project**:
 
 - Ryan Wickramaratne
-- Mich Fernando
-- And the Smart Dev Team 💡
+- Shane Dinod
 
