@@ -87,22 +87,22 @@ export const CHANNEL_NAME = "ChatAppCall";
 ### Login & Register
 | Login | Register |
 |-------|----------|
-| ![Login](./screenshots/login.png) | ![Register](./screenshots/register.png) |
+| ![Login](./screenshots/login.jpg) | ![Register](./screenshots/register.jpg) |
 
 ### Chat Interface
 | Chat List | Message View |
 |-----------|---------------|
-| ![Chats](./screenshots/chats.png) | ![Messages](./screenshots/chat.png) |
+| ![Chats](./screenshots/chats.jpg) | ![Messages](./screenshots/chat.jpg) |
 
 ### Profile Management
 | Profile Page | Edit Modal |
 |--------------|------------|
-| ![Profile](./screenshots/profile.png) | ![Edit](./screenshots/edit-profile.png) |
+| ![Profile](./screenshots/profile.jpg) | ![Edit](./screenshots/edit-profile.jpg) |
 
 ### Additional Pages
 | Stats | Games | Settings |
 |-------|-------|----------|
-| ![Stats](./screenshots/stats.png) | ![Games](./screenshots/games.png) | ![Settings](./screenshots/settings.png) |
+| ![Stats](./screenshots/stats.jpg) | ![Games](./screenshots/games.jpg) | ![Settings](./screenshots/settings.jpg) |
 
 ---
 
