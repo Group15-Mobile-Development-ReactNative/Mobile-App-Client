@@ -37,7 +37,7 @@ Smart Chat is a modern and engaging messaging app built with React Native. It su
 
 Install via Expo:
 
-🔗 [**Smart Chat - Expo Build Link**](https://expo.dev/accounts/mobiledev-smart-app/projects/Mobile-App-Client/builds/449c9840-b37c-467e-b219-d29b0626c4c5)
+🔗 [**Smart Chat - Expo Build Link**](https://expo.dev/accounts/mobiledev-smart-app/projects/Mobile-App-Client/builds/9766c880-e241-4983-9337-aa52a40303ec)
 
 Or scan the QR code:
 
