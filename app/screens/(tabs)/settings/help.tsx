@@ -27,28 +27,8 @@ const HelpScreen = () => {
       answer: 'Check your internet connection and make sure your credentials are correct. You can also reset your password if needed.',
     },
     {
-      question: 'How do I create a new chat group?',
-      answer: 'Go to the Chats tab, tap on the "New Group" icon, add members, name the group, and you’re good to go!',
-    },
-    {
-      question: 'How do I block or report a user?',
-      answer: 'Open the user’s profile, tap the three-dot menu, and select "Block" or "Report" to take action.',
-    },
-    {
-      question: 'How does the "Seen" feature work?',
-      answer: 'Once someone views your message, a "Seen" tag appears below it. This works only if both users have read receipts enabled.',
-    },
-    {
       question: 'How do I change my profile picture?',
       answer: 'Go to your profile, tap the image, and choose a new photo from your gallery or camera.',
-    },
-    {
-      question: 'Can I customize notification settings for specific chats?',
-      answer: 'Yes, open a chat, tap the three-dot menu, and select "Notification settings" to personalize them.',
-    },
-    {
-      question: 'Is it possible to delete a message after it has been sent?',
-      answer: 'Yes. Long press on the message and choose "Delete for Everyone" within a limited time window.',
     },
   ];
 
